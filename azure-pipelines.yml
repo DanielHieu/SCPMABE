@@ -32,3 +32,13 @@ steps:
   inputs:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
+- task: AzureWebApp@1
+  inputs:
+    azureSubscription: 'Azure subscription 1(183269e1-34af-41cd-8cc5-9e2bb1328a88)'
+    appType: 'webApp'
+    appName: 'scpm-be'
+    deployToSlotOrASE: true
+    resourceGroupName: 'scpm-resources'
+    slotName: 'production'
+    package: '$(System.DefaultWorkingDirectory)/**/*.zip'
+    deploymentMethod: 'auto'
