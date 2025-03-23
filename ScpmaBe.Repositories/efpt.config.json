@@ -1,0 +1,108 @@
+﻿{
+   "CodeGenerationMode": 4,
+   "ContextClassName": "SCPMContext",
+   "ContextNamespace": null,
+   "FilterSchemas": false,
+   "IncludeConnectionString": false,
+   "ModelNamespace": null,
+   "OutputContextPath": null,
+   "OutputPath": "Entities",
+   "PreserveCasingWithRegex": true,
+   "ProjectRootNamespace": "ScpmaBe.Repositories",
+   "Schemas": null,
+   "SelectedHandlebarsLanguage": 2,
+   "SelectedToBeGenerated": 0,
+   "T4TemplatePath": null,
+   "Tables": [
+      {
+         "Name": "[dbo].[Area]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[AssignedTask]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Car]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Contract]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Customer]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[EntryExitLog]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Feedback]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Floor]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Owner]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[ParkingLot]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[ParkingLotPriceHistory]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[ParkingSpace]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[ParkingStatusSensor]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[PaymentContract]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Staff]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[TaskEach]",
+         "ObjectType": 0
+      }
+   ],
+   "UiHint": null,
+   "UncountableWords": null,
+   "UseAsyncStoredProcedureCalls": true,
+   "UseBoolPropertiesWithoutDefaultSql": false,
+   "UseDatabaseNames": false,
+   "UseDatabaseNamesForRoutines": true,
+   "UseDateOnlyTimeOnly": true,
+   "UseDbContextSplitting": false,
+   "UseDecimalDataAnnotationForSprocResult": true,
+   "UseFluentApiOnly": true,
+   "UseHandleBars": false,
+   "UseHierarchyId": false,
+   "UseInflector": true,
+   "UseLegacyPluralizer": false,
+   "UseManyToManyEntity": false,
+   "UseNoDefaultConstructor": false,
+   "UseNoNavigations": false,
+   "UseNoObjectFilter": false,
+   "UseNodaTime": false,
+   "UseNullableReferences": false,
+   "UsePrefixNavigationNaming": false,
+   "UseSchemaFolders": false,
+   "UseSchemaNamespaces": false,
+   "UseSpatial": false,
+   "UseT4": false,
+   "UseT4Split": false
+}

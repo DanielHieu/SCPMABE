@@ -1,0 +1,6 @@
+@ScpmaBe.WebApi_HostAddress = http://localhost:5220
+
+GET {{ScpmaBe.WebApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
