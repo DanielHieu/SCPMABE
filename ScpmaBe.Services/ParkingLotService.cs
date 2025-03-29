@@ -26,16 +26,16 @@ namespace ScpmaBe.Services.Models
 
             if (parkinglot == null) throw AppExceptions.NotFoundParkingLot();
 
-            return parkinglot ;
+            return parkinglot;
         }
 
         public async Task<ParkingLot> AddParkingLotAsync(AddParkingLotRequest request)
         {
 
-            var newParkingLot = new ParkingLot 
+            var newParkingLot = new ParkingLot
             {
                 PricePerDay = request.PricePerDay,
-                PricePerHour = request.PricePerHour,    
+                PricePerHour = request.PricePerHour,
                 PricePerMonth = request.PricePerMonth,
                 Address = request.Address,
                 Lat = request.Lat,
@@ -65,8 +65,8 @@ namespace ScpmaBe.Services.Models
             // Giá có thay đổi?
             bool isPriceChanged = false;
 
-            if (updateParkingLot.PricePerHour != request.PricePerHour || 
-                updateParkingLot.PricePerDay != request.PricePerDay || 
+            if (updateParkingLot.PricePerHour != request.PricePerHour ||
+                updateParkingLot.PricePerDay != request.PricePerDay ||
                 updateParkingLot.PricePerMonth != request.PricePerMonth)
             {
                 isPriceChanged = true;
@@ -107,12 +107,12 @@ namespace ScpmaBe.Services.Models
         {
             try
             {
-                var parkinglot  = await _parkinglotRepository.GetById(id);     
+                var parkinglot = await _parkinglotRepository.GetById(id);
 
                 if (parkinglot == null) throw AppExceptions.NotFoundParkingLot();
 
                 await _parkinglotRepository.Delete(id);
-        
+
                 return true;
             }
             catch (Exception ex)
@@ -123,25 +123,30 @@ namespace ScpmaBe.Services.Models
 
         public async Task<List<ParkingLot>> Search(SearchParkingLotRequest request)
         {
-            return await _parkinglotRepository
-                                        .GetAll()
-                                        .Where(x => request.Keyword.Contains(x.ParkingLotId.ToString()) || 
-                                                    (!string.IsNullOrEmpty(x.Address) && x.Address.Contains(request.Keyword))
-                                              )
-                                        .Select(x => new ParkingLot
-                                        {
-                                            ParkingLotId = x.ParkingLotId,
-                                            OwnerId = x.OwnerId,
-                                            Address = x.Address,
-                                            Lat = x.Lat,
-                                            Long = x.Long,
-                                            PricePerDay = x.PricePerDay,
-                                            PricePerHour = x.PricePerHour,
-                                            PricePerMonth = x.PricePerMonth,
-                                            CreatedDate = x.CreatedDate,
-                                            UpdatedDate = x.UpdatedDate
-                                        })
-                                        .ToListAsync();
+            var query = _parkinglotRepository.GetAll();
+
+            if (!string.IsNullOrEmpty(request.Keyword))
+            {
+                query = query.Where(x => x.ParkingLotId.ToString().Contains(request.Keyword) ||
+                                        (!string.IsNullOrEmpty(x.Address) && x.Address.Contains(request.Keyword))
+                                    );
+            }
+
+            var parkingLots = await query.Select(x => new ParkingLot
+            {
+                ParkingLotId = x.ParkingLotId,
+                OwnerId = x.OwnerId,
+                Address = x.Address,
+                Lat = x.Lat,
+                Long = x.Long,
+                PricePerDay = x.PricePerDay,
+                PricePerHour = x.PricePerHour,
+                PricePerMonth = x.PricePerMonth,
+                CreatedDate = x.CreatedDate,
+                UpdatedDate = x.UpdatedDate
+            }).ToListAsync();
+
+            return parkingLots;
         }
     }
 }
