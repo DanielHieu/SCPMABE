@@ -42,16 +42,16 @@ namespace ScpmaBe.Services
 
         public async Task<List<Customer>> SearchCustomerAsync(SearchCustomerRequest request)
         {
-            var query = await _customerRepository.GetAll();
+            var query = _customerRepository.GetAll();
 
             if (!string.IsNullOrEmpty(request.Keyword))
                 query = query.Where(
-                        s => s.CustomerId.ToString().Contains(request.Keyword.Contains()) ||
+                        s => s.CustomerId.ToString().Contains(request.Keyword) ||
                             (!string.IsNullOrEmpty(s.FirstName) && s.FirstName.Contains(request.Keyword)) ||
                             (!string.IsNullOrEmpty(s.LastName) && s.LastName.Contains(request.Keyword)) ||
                             (!string.IsNullOrEmpty(s.Phone) && s.Phone.Contains(request.Keyword)));
 
-            var customers = query.Select(s => new Customer
+            var customers = await query.Select(s => new Customer
             {
                 CustomerId = s.CustomerId,
                 OwnerId = s.OwnerId,
