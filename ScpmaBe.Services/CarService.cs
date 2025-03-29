@@ -47,23 +47,26 @@ namespace ScpmaBe.Services
 
         public async Task<List<Car>> SearchCarAsync(SearchCarRequest request)
         {
-            var searchCar = await _carRepository.GetAll()
-                                                .Where(x => request.Keyword.Contains(x.CarId.ToString()) ||
-                                                            !string.IsNullOrEmpty(x.LicensePlate) && x.LicensePlate.Contains(request.Keyword))
-                                                .Select(x => new Car
-                                                {
-                                                    CarId = x.CarId,
-                                                    CustomerId = x.CustomerId,
-                                                    Model = x.Model,
-                                                    Color = x.Color,
-                                                    LicensePlate = x.LicensePlate,
-                                                    RegistedDate = x.RegistedDate,
-                                                    Status = x.Status
-                                                })
-                                                .ToListAsync();
+            var query = _carRepository.GetAll();
 
-            return searchCar;
+            if (!string.IsNullOrEmpty(request.Keyword))
+            {
+                query = query.Where(x => x.CarId.ToString().Contains(request.Keyword) ||
+                                         !string.IsNullOrEmpty(x.LicensePlate) && x.LicensePlate.Contains(request.Keyword));
+            }
 
+            var cars = await query.Select(x => new Car
+            {
+                CarId = x.CarId,
+                CustomerId = x.CustomerId,
+                Model = x.Model,
+                Color = x.Color,
+                LicensePlate = x.LicensePlate,
+                RegistedDate = x.RegistedDate,
+                Status = x.Status
+            }).ToListAsync();
+
+            return cars;
         }
 
         public async Task<Car> AddCarAsync(AddCarRequest request)

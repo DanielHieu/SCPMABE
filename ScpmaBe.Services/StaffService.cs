@@ -44,23 +44,27 @@ namespace ScpmaBe.Services
 
         public async Task<List<Staff>> SearchStaffAsync(SearchStaffRequest request)
         {
-            var searchStaff = await _staffRepository.GetAll()
-                .Where(s => request.Keyword.Contains(s.StaffId.ToString()) ||
-                            (!string.IsNullOrEmpty(s.Phone) && s.Phone.Contains(request.Keyword)))
-                .Select(s => new Staff
-                {
-                    StaffId = s.StaffId,
-                    OwnerId = s.OwnerId,
-                    FirstName = s.FirstName,
-                    LastName = s.LastName,
-                    Phone = s.Phone,
-                    Email = s.Email,
-                    Username = s.Username,
-                    IsActive = s.IsActive
-                })
-                .ToListAsync();
+            var query = _staffRepository.GetAll();
 
-            return searchStaff;
+            if (!string.IsNullOrEmpty(request.Keyword))
+            {
+                query = query.Where(s => s.StaffId.ToString().Contains(request.Keyword) ||
+                            (!string.IsNullOrEmpty(s.Phone) && s.Phone.Contains(request.Keyword)));
+            }
+
+            var staffs = await query.Select(s => new Staff
+            {
+                StaffId = s.StaffId,
+                OwnerId = s.OwnerId,
+                FirstName = s.FirstName,
+                LastName = s.LastName,
+                Phone = s.Phone,
+                Email = s.Email,
+                Username = s.Username,
+                IsActive = s.IsActive
+            }).ToListAsync();
+
+            return staffs;
         }
 
         public async Task<Staff> RegisterStaffAsync(RegisterStaffRequest request)

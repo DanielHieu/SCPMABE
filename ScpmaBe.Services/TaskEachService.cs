@@ -43,16 +43,23 @@ namespace ScpmaBe.Services
 
         public async Task<List<TaskEach>> SearchTaskEachAsync(SearchTaskRequest request)
         {
-            return await _taskEachRepository.GetAll()
-                                            .Where(x => !string.IsNullOrEmpty(request.Keyword) && x.Description.Contains(request.Keyword))
-                                            .Select(x => new TaskEach
-                                            {
-                                                TaskEachId = x.TaskEachId,
-                                                OwnerId = x.OwnerId,
-                                                Description = x.Description
-                                            })
-                                            .ToListAsync();
+            var query = _taskEachRepository.GetAll();
 
+            if (!string.IsNullOrEmpty(request.Keyword))
+            {
+                query = query.Where(x =>
+                                !string.IsNullOrEmpty(x.Description) &&
+                                x.Description.Contains(request.Keyword));
+            }
+
+            var tasks = await query.Select(x => new TaskEach
+            {
+                TaskEachId = x.TaskEachId,
+                OwnerId = x.OwnerId,
+                Description = x.Description
+            }).ToListAsync();
+
+            return tasks;
         }
 
         public async Task<TaskEach> AddTaskEachAsync(AddTaskEachRequest request)
