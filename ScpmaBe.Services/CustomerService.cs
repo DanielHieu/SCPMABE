@@ -42,23 +42,28 @@ namespace ScpmaBe.Services
 
         public async Task<List<Customer>> SearchCustomerAsync(SearchCustomerRequest request)
         {
-            var searchCustomer = await _customerRepository.GetAll()
-                .Where(s => request.Keyword.Contains(s.CustomerId.ToString()) ||
-                            (!string.IsNullOrEmpty(s.Phone) && s.Phone.Contains(request.Keyword)))
-                .Select(s => new Customer
-                {
-                    CustomerId = s.CustomerId,
-                    OwnerId = s.OwnerId,
-                    FirstName = s.FirstName,
-                    LastName = s.LastName,
-                    Phone = s.Phone,
-                    Email = s.Email,
-                    Username = s.Username,
-                    IsActive = s.IsActive
-                })
-                .ToListAsync();
+            var query = await _customerRepository.GetAll();
 
-            return searchCustomer;
+            if (!string.IsNullOrEmpty(request.Keyword))
+                query = query.Where(
+                        s => s.CustomerId.ToString().Contains(request.Keyword.Contains()) ||
+                            (!string.IsNullOrEmpty(s.FirstName) && s.FirstName.Contains(request.Keyword)) ||
+                            (!string.IsNullOrEmpty(s.LastName) && s.LastName.Contains(request.Keyword)) ||
+                            (!string.IsNullOrEmpty(s.Phone) && s.Phone.Contains(request.Keyword)));
+
+            var customers = query.Select(s => new Customer
+            {
+                CustomerId = s.CustomerId,
+                OwnerId = s.OwnerId,
+                FirstName = s.FirstName,
+                LastName = s.LastName,
+                Phone = s.Phone,
+                Email = s.Email,
+                Username = s.Username,
+                IsActive = s.IsActive
+            }).ToListAsync();
+
+            return customers;
         }
 
         public async Task<Customer> RegisterCustomerAsync(RegisterCustomerRequest request)
@@ -67,7 +72,7 @@ namespace ScpmaBe.Services
                 throw AppExceptions.BadRequestUsernameIsInvalid();
 
             var ownerExists = await _ownerRepository.ExistsByIdAsync(request.OwnerId);
-            
+
             if (!ownerExists)
             {
                 throw AppExceptions.NotFoundOnwerId(); // Return fail if OwnerId not existed.
