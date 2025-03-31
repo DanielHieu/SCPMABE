@@ -30,13 +30,6 @@ namespace ScpmaBe.Services
                                  .ToListAsync();
         }
 
-        public async Task<List<Car>> GetCarsOfOwnerAsync(int ownerId)
-        {
-            return await _carRepository.GetAll()
-                                       .Where(x => x.Customer.OwnerId == ownerId)
-                                       .ToListAsync();
-        }
-
         public async Task<Car> GetById(int id)
         {
             var existCar = await _carRepository.GetById(id);
@@ -112,6 +105,7 @@ namespace ScpmaBe.Services
             updateCar.Status = request.Status;
 
             await _carRepository.Update(updateCar);
+
             return updateCar;
         }
 

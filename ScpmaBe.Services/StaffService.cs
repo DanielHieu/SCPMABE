@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ScpmaBe.Repositories.Entities;
 using ScpmaBe.Repositories.Interfaces;
-using ScpmaBe.Repositories.Repo;
 using ScpmaBe.Services.Interfaces;
 using ScpmaBe.Services.Models;
 using ScpmBe.Services.Exceptions;
@@ -24,13 +23,6 @@ namespace ScpmaBe.Services
         public async Task<List<Staff>> GetPaging(int pageIndex, int pageSize)
         {
             return await _staffRepository.GetAll().Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
-        }
-
-        public async Task<List<Staff>> GetStaffsOfOwnerAsync(int ownerId)
-        {
-            return await _staffRepository.GetAll()
-                            .Where(x => x.OwnerId == ownerId)
-                            .ToListAsync();
         }
 
         public async Task<Staff> GetById(int id)

@@ -80,5 +80,24 @@ namespace ScpmaBe.Services.Models
         {
             return await _floorRepository.GetAll().Where(x => x.AreaId == areaId).ToListAsync();
         }
+
+        public async Task<List<Floor>> GetFloorsByParkingLot(int parkingLotId)
+        {
+            return await _floorRepository
+                            .GetAll()
+                            .Include(x => x.Area)
+                            .Where(x => x.Area.ParkingLotId == parkingLotId)
+                            .Select(x=> new Floor
+                            {
+                                FloorId = x.FloorId,
+                                FloorName = x.FloorName,
+                                AreaId = x.AreaId,
+                                NumberEmptyParkingSpace = x.NumberEmptyParkingSpace,
+                                NumberUsedParkingSpace = x.NumberUsedParkingSpace,
+                                TotalParkingSpace = x.TotalParkingSpace,
+                                Status = x.Status
+                            })
+                            .ToListAsync();
+        }
     }
 }

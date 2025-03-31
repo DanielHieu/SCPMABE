@@ -82,6 +82,14 @@ namespace ScpmaBe.WebApi.Controllers
 
             return Ok(result);
         }
+
+        [HttpGet("GetFull/{id}")]
+        public async Task<IActionResult> GetFull(int id)
+        {
+            var result = await _parkingLotService.GetFull(id);
+
+            return Ok(result);
+        }
     }
 }
 

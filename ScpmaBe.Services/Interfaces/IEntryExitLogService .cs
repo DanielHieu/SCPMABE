@@ -11,5 +11,7 @@ namespace ScpmaBe.Services.Interfaces
         Task<EntryExitLog> UpdateEntryExitLogAsync(UpdateEntryExitLogRequest request);
         Task<bool> DeleteEntryExitLogAsync(int id);
         Task<List<EntryExitLog>> Search(SearchEntryExitLogRequest request);
+        Task<CalculateFeeResponse> CalculateFeeAsync(CalculateFeeRequest request);
+        Task<List<EntrancingCarResponse>> GetEntrancingCars(int parkingLotId);
     }
 }

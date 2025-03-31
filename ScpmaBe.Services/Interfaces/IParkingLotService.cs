@@ -12,5 +12,7 @@ namespace ScpmaBe.Services.Interfaces
         Task<bool> DeleteParkingLotAsync(int id);
 
         Task<List<ParkingLot>> Search(SearchParkingLotRequest request);
+
+        Task<ParkingLotFullResponse> GetFull(int parkingLotId);
     }
 }

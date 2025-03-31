@@ -22,13 +22,6 @@ namespace ScpmaBe.WebApi.Controllers
             return Ok(getCarsOfCustomer);
         }
 
-        [HttpGet("GetCarsOfOwner")]
-        public async Task<IActionResult> GetCarsOfOwner(int ownerId)
-        {
-            var getCarsOfOwner = await _carService.GetCarsOfOwnerAsync(ownerId);
-            return Ok(getCarsOfOwner);
-        }
-
         [HttpGet("GetById")]
         public async Task<IActionResult> GetById(int id)
         {

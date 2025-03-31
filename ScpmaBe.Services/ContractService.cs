@@ -14,7 +14,10 @@ namespace ScpmaBe.Services
         private ICarRepository _carRepository;
         private IParkingSpaceRepository _parkingSpaceRepository;
 
-        public ContractService(IContractRepository contractRepository, ICarRepository carRepository, IParkingSpaceRepository parkingSpaceRepository)
+        public ContractService(
+            IContractRepository contractRepository, 
+            ICarRepository carRepository, 
+            IParkingSpaceRepository parkingSpaceRepository)
         {
             _contractRepository = contractRepository;
             _carRepository = carRepository;
@@ -29,6 +32,7 @@ namespace ScpmaBe.Services
         public async Task<Contract> GetByIdAsync(int id)
         {
             var existId = await _contractRepository.GetById(id);
+
             if (existId == null) throw AppExceptions.NotFoundId();
 
             return existId;
@@ -53,11 +57,12 @@ namespace ScpmaBe.Services
             var searchTask = await _contractRepository.GetAll()
                                                       .Include(x => x.Car)
                                                       .Where(x =>
-                                                        !string.IsNullOrEmpty(request.Keyword) && 
-                                                        (x.ContractId.ToString().Contains(request.Keyword) || x.Car.LicensePlate.Contains(request.Keyword))
+                                                        string.IsNullOrEmpty(request.Keyword) || 
+                                                        x.ContractId.ToString().Contains(request.Keyword) || 
+                                                        x.Car.LicensePlate.Contains(request.Keyword)
                                                       )
-                                                      .Where(x => !string.IsNullOrEmpty(request.LicencePlate) && request.LicencePlate == x.Car.LicensePlate)
-                                                      .Where(x => request.Status.HasValue && request.Status.Value == x.Status)
+                                                      .Where(x => string.IsNullOrEmpty(request.LicensePlate) || request.LicensePlate == x.Car.LicensePlate)
+                                                      .Where(x => request.Status.HasValue == false || request.Status.Value == x.Status)
                                                       .Select(x => new Contract
                                                       {
                                                           ContractId = x.ContractId,

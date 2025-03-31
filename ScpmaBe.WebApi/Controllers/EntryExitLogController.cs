@@ -49,10 +49,27 @@ namespace ScpmaBe.WebApi.Controllers
 
             return Ok(result);
         }
+
         [HttpPost("Search")]
         public async Task<IActionResult> Search(SearchEntryExitLogRequest request)
         {
             var result = await _entryExitLogService.Search(request);
+
+            return Ok(result);
+        }
+
+        [HttpPost("CalculateFee")]
+        public async Task<IActionResult> CalculateFee([FromBody] CalculateFeeRequest request)
+        {
+            var response = await _entryExitLogService.CalculateFeeAsync(request);
+
+            return Ok(response);
+        }
+
+        [HttpGet("GetEntrancingCars/{parkingLotId}")]
+        public async Task<IActionResult> GetEntrancingCars(int parkingLotId)
+        {
+            var result = await _entryExitLogService.GetEntrancingCars(parkingLotId);
 
             return Ok(result);
         }

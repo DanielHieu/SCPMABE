@@ -7,8 +7,6 @@ namespace ScpmaBe.Services.Interfaces
     { 
         Task<List<Staff>> GetPaging(int pageIndex, int pageSize);
 
-        Task<List<Staff>> GetStaffsOfOwnerAsync(int ownerId);
-
         Task<Staff> GetById(int id);
 
         Task<List<Staff>> SearchStaffAsync(SearchStaffRequest request);
