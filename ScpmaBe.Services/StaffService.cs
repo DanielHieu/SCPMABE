@@ -47,10 +47,11 @@ namespace ScpmaBe.Services
             var query = _staffRepository.GetAll();
 
             if (!string.IsNullOrEmpty(request.Keyword))
-            {
-                query = query.Where(s => s.StaffId.ToString().Contains(request.Keyword) ||
+                query = query.Where(
+                            s => s.StaffId.ToString().Contains(request.Keyword) ||
+                            (!string.IsNullOrEmpty(s.FirstName) && s.FirstName.Contains(request.Keyword)) ||
+                            (!string.IsNullOrEmpty(s.LastName) && s.LastName.Contains(request.Keyword)) ||
                             (!string.IsNullOrEmpty(s.Phone) && s.Phone.Contains(request.Keyword)));
-            }
 
             var staffs = await query.Select(s => new Staff
             {

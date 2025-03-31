@@ -14,13 +14,6 @@ namespace ScpmaBe.WebApi.Controllers
             _staffService = staffService;
         }
 
-        [HttpGet("GetStaffsOfOwner")]
-        public async Task<IActionResult> GetStaffsOfOwner(int ownerId)
-        {
-            var getStaffs = await _staffService.GetStaffsOfOwnerAsync(ownerId);
-            return Ok(getStaffs);
-        }
-
         [HttpGet("GetById")]
         public async Task<IActionResult> GetById(int id)
         {
