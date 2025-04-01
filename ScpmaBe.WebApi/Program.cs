@@ -8,11 +8,14 @@ using ScpmaBe.Services.Common;
 using ScpmaBe.Services.Interfaces;
 using ScpmaBe.Services.Models;
 using ScpmaBe.WebApi.Converters;
+using ScpmaBe.WebApi.Jobs;
 using ScpmBe.WebApi.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+builder.Services.AddHostedService<ContractJob>();
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
