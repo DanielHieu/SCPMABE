@@ -1,6 +1,4 @@
-﻿using ScpmaBe.Repositories.Entities;
-
-namespace ScpmaBe.Services.Models
+﻿namespace ScpmaBe.Services.Models
 {
     public class CalculateFeeResponse
     {
@@ -8,11 +6,12 @@ namespace ScpmaBe.Services.Models
         public int ParkingSpaceId { get; set; }
 
         public string LicensePlate { get; set; }
+        public string EntranceImage { get; set; }
         
         public DateTime CheckInTime { get; set; }
         public DateTime CheckOutTime { get; set; }
 
-        public ContractResponse? Contract { get; set; }
+        public ContractResponse Contract { get; set; }
         public decimal Fee { get; set; }
         public int RemainingHour { get; set; }
 

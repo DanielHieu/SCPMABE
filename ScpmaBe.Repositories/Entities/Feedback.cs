@@ -16,5 +16,9 @@ public partial class Feedback : IEntityBase
 
     public DateTime DateSubmitted { get; set; }
 
+    public int Status { get; set; }
+    public string ResponsedContent { get; set; }
+    public DateTime? ResponsedAt { get; set; }
+
     public virtual Customer Customer { get; set; }
 }

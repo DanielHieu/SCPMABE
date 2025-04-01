@@ -23,8 +23,12 @@ public partial class Customer : IEntityBase
     public string Username { get; set; }
 
     public string Password { get; set; }
+    public string PasswordTemp { get; set; }
+    public string ActivationCode { get; set; }
 
     public bool IsActive { get; set; }
+
+    public string Note { get; set; }
 
     public virtual ICollection<Car> Cars { get; set; } = new List<Car>();
 

@@ -21,4 +21,13 @@
     <ProjectReference Include="..\ScpmaBe.Services\ScpmaBe.Services.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="wwwroot\static\payment-error.html" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\files\entrance\" />
+    <Folder Include="wwwroot\files\exit\" />
+  </ItemGroup>
+
 </Project>

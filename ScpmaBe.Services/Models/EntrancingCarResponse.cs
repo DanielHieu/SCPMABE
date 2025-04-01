@@ -9,5 +9,6 @@
         public string AreaName { get; set; }
         public string FloorName { get; set; }
         public string ParkingSpaceName { get; set; }
+        public string RentalType { get; set; }
     }
 }

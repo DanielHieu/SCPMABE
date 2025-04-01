@@ -14,10 +14,6 @@ public partial class Floor : IEntityBase
 
     public string FloorName { get; set; }
 
-    public int NumberEmptyParkingSpace { get; set; }
-
-    public int NumberUsedParkingSpace { get; set; }
-
     public int TotalParkingSpace { get; set; }
 
     public int Status { get; set; }

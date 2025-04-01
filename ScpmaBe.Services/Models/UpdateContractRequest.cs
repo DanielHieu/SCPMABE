@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ScpmaBe.Services.Models
+﻿namespace ScpmaBe.Services.Models
 {
     public class UpdateContractRequest
     {
@@ -20,7 +14,6 @@ namespace ScpmaBe.Services.Models
 
         public int Status { get; set; }
 
-        public DateTime CreatedDate { get; set; }
 
         public DateTime UpdatedDate { get; set; }
 

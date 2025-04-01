@@ -1,0 +1,45 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Thông báo tài khoản đã được kích hoạt</title>
+</head>
+<body style="font-family: Arial, sans-serif; background-color: #f2f2f2; padding: 20px;">
+    <table align="center" width="600" style="background-color: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0px 0px 10px rgba(0,0,0,0.1);">
+        <tr>
+            <td align="center">
+                <h2 style="color: #4CAF50;">🎉 Chúc mừng!</h2>
+                <p style="font-size: 16px; color: #333333;">
+                    Tài khoản của bạn đã được <strong>tạo thành công.</strong>.
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <td style="padding-top: 20px;">
+                <p style="font-size: 15px; color: #555555;">
+                    Thông tin tài khoản:
+                </p>
+                <ul style="font-size: 15px; color: #555555; line-height: 1.6;">
+                    <li><strong>Tên tài khoản:</strong> {{UserName}}</li>
+                    <li><strong>Email đăng ký:</strong> {{UserEmail}}</li>
+                    <li><strong>Ngày tạo:</strong> {{CreatedDate}}</li>
+                    <li><strong>Kích hoạt:</strong><a href="{{ActivationLink}}">{{ActivationLink}}</a></li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td style="padding-top: 20px;">
+                <p style="font-size: 15px; color: #555555;">
+                    Vui lòng kích hoạt và bắt đầu sử dụng dịch vụ của chúng tôi.
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <td style="padding-top: 40px; text-align: center; font-size: 13px; color: #999999;">
+                Nếu bạn có bất kỳ câu hỏi nào, vui lòng liên hệ với đội ngũ hỗ trợ của chúng tôi.<br>
+                Xin cảm ơn bạn đã đồng hành cùng chúng tôi!
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

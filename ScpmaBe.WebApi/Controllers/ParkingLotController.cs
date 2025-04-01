@@ -4,8 +4,8 @@ using ScpmaBe.Services.Models;
 
 namespace ScpmaBe.WebApi.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
     public class ParkingLotController : Controller
     {
         private readonly IParkingLotService _parkingLotService;
@@ -21,6 +21,8 @@ namespace ScpmaBe.WebApi.Controllers
             return Ok(new
             {
                 entity.ParkingLotId,
+                Name = entity.ParkingLotName,
+                entity.ParkingLotName,
                 entity.Address,
                 entity.Lat,
                 entity.Long,
@@ -28,6 +30,17 @@ namespace ScpmaBe.WebApi.Controllers
                 entity.PricePerMonth,
                 entity.PricePerHour
             });
+        }
+
+        [HttpGet("GetAll")]
+        public async Task<IActionResult> GetAll()
+        {
+            var result = await _parkingLotService.Search(new SearchParkingLotRequest
+            {
+                Keyword = ""
+            });
+
+            return Ok(result);
         }
 
         [HttpPost("Add")]
@@ -38,6 +51,8 @@ namespace ScpmaBe.WebApi.Controllers
             return Ok(new
             {
                 entity.ParkingLotId,
+                Name = entity.ParkingLotName,
+                entity.ParkingLotName,
                 entity.Address,
                 entity.Lat,
                 entity.Long,
@@ -58,6 +73,8 @@ namespace ScpmaBe.WebApi.Controllers
             return Ok(new
             {
                 entity.ParkingLotId,
+                Name = entity.ParkingLotName,
+                entity.ParkingLotName,
                 entity.Address,
                 entity.Lat,
                 entity.Long,
@@ -83,11 +100,42 @@ namespace ScpmaBe.WebApi.Controllers
             return Ok(result);
         }
 
-        [HttpGet("GetFull/{id}")]
+        [HttpGet("{id}/Full")]
         public async Task<IActionResult> GetFull(int id)
         {
             var result = await _parkingLotService.GetFull(id);
 
+            return Ok(result);
+        }
+
+        [HttpGet("{id}/SummaryStatuses")]
+        public async Task<IActionResult> GetSummaryStatuses(int id)
+        {
+            var result = await _parkingLotService.GetSummaryStatuses(id);
+
+            return Ok(result);
+        }
+
+        [HttpGet("{id}/Summaries")]
+        public async Task<IActionResult> GetSummaries(int id)
+        {
+            var result = await _parkingLotService.GetSummaries(id);
+
+            return Ok(result);
+        }
+
+        [HttpPost("SearchAvailablesForContract")]
+        public async Task<IActionResult> SearchAvailablesForContract([FromBody] SearchAvailablesForContractRequest request)
+        {
+            var result = await _parkingLotService.GetAvailablesForContract(request);
+
+            return Ok(result);
+        }
+
+        [HttpGet("{id}/Stats")]
+        public async Task<IActionResult> Stats(int id)
+        {
+            var result = await _parkingLotService.GetStats(id);
             return Ok(result);
         }
     }

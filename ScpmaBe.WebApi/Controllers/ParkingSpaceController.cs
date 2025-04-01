@@ -9,6 +9,7 @@ namespace ScpmaBe.WebApi.Controllers
     public class ParkingSpaceController : ControllerBase
     {
         private readonly IParkingSpaceService _parkingSpaceService;
+
         public ParkingSpaceController(IParkingSpaceService ParkingSpaceService)
         {
             _parkingSpaceService = ParkingSpaceService;

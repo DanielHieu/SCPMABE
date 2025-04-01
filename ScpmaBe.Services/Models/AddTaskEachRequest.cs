@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ScpmaBe.Services.Models
+﻿namespace ScpmaBe.Services.Models
 {
     public class AddTaskEachRequest
     {
-        public int OwnerId { get; set; }
+        public string Title { get; set; }
+        public int AssignedToId { get; set; }
+
+        public string Priority { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
 
         public string Description { get; set; }
     }

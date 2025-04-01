@@ -9,24 +9,19 @@ namespace ScpmaBe.Repositories.Entities;
 public partial class EntryExitLog : IEntityBase
 {
     public int EntryExitLogId { get; set; }
-
     public int ParkingSpaceId { get; set; }
-
     public string LicensePlate { get; set; }
-
     public decimal PricePerHour { get; set; }
-
     public decimal PricePerDay { get; set; }
-
     public decimal PricePerMonth { get; set; }
-
     public DateTime EntryTime { get; set; }
-
     public DateTime? ExitTime { get; set; }
-
     public int RentalType { get; set; }
-
     public decimal TotalAmount { get; set; }
+    public string EntranceImage { get; set; }
+    public string ExitImage { get; set; }
+
+    public bool IsPaid { get; set; }
 
     public virtual ParkingSpace ParkingSpace { get; set; }
 }

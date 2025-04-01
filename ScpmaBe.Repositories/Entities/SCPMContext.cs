@@ -15,8 +15,6 @@ public partial class SCPMContext : DbContext
 
     public virtual DbSet<Area> Areas { get; set; }
 
-    public virtual DbSet<AssignedTask> AssignedTasks { get; set; }
-
     public virtual DbSet<Car> Cars { get; set; }
 
     public virtual DbSet<Contract> Contracts { get; set; }
@@ -61,28 +59,6 @@ public partial class SCPMContext : DbContext
                 .HasConstraintName("FK_Area_ParkingLot");
         });
 
-        modelBuilder.Entity<AssignedTask>(entity =>
-        {
-            entity.ToTable("AssignedTask");
-
-            entity.Property(e => e.Address)
-                .IsRequired()
-                .HasMaxLength(256);
-            entity.Property(e => e.CreatedDate).HasColumnType("datetime");
-            entity.Property(e => e.Note).HasMaxLength(256);
-            entity.Property(e => e.UpdatedDate).HasColumnType("datetime");
-
-            entity.HasOne(d => d.Staff).WithMany(p => p.AssignedTasks)
-                .HasForeignKey(d => d.StaffId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_AssignedTask_Staff");
-
-            entity.HasOne(d => d.TaskEach).WithMany(p => p.AssignedTasks)
-                .HasForeignKey(d => d.TaskEachId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_AssignedTask_TaskEach");
-        });
-
         modelBuilder.Entity<Car>(entity =>
         {
             entity.ToTable("Car");
@@ -91,6 +67,9 @@ public partial class SCPMContext : DbContext
             entity.Property(e => e.LicensePlate)
                 .IsRequired()
                 .HasMaxLength(64);
+
+            entity.Property(e => e.Thumbnail).HasMaxLength(256);
+            entity.Property(e => e.Brand).HasMaxLength(64);
             entity.Property(e => e.Model).HasMaxLength(64);
             entity.Property(e => e.RegistedDate).HasColumnType("datetime");
 
@@ -133,12 +112,21 @@ public partial class SCPMContext : DbContext
             entity.Property(e => e.Password)
                 .IsRequired()
                 .HasMaxLength(128);
+
             entity.Property(e => e.Phone)
                 .IsRequired()
                 .HasMaxLength(64);
             entity.Property(e => e.Username)
                 .IsRequired()
                 .HasMaxLength(64);
+
+            entity.Property(e => e.Note).HasMaxLength(256);
+
+            entity.Property(e => e.PasswordTemp)
+                  .HasMaxLength(128);
+
+            entity.Property(e => e.ActivationCode)
+                  .HasMaxLength(32);
 
             entity.HasOne(d => d.Owner).WithMany(p => p.Customers)
                 .HasForeignKey(d => d.OwnerId)
@@ -155,6 +143,8 @@ public partial class SCPMContext : DbContext
             entity.Property(e => e.LicensePlate)
                 .IsRequired()
                 .HasMaxLength(64);
+            entity.Property(e => e.EntranceImage).HasColumnType("nvarchar(255)");
+            entity.Property(e => e.ExitImage).HasColumnType("nvarchar(255)");
             entity.Property(e => e.PricePerDay).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.PricePerHour).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.PricePerMonth).HasColumnType("decimal(18, 2)");
@@ -173,6 +163,10 @@ public partial class SCPMContext : DbContext
             entity.Property(e => e.Message)
                 .IsRequired()
                 .HasMaxLength(256);
+
+            entity.Property(e => e.Status).HasDefaultValue(1);
+            entity.Property(e => e.ResponsedContent).HasMaxLength(256);
+            entity.Property(e => e.ResponsedAt).HasColumnType("datetime");
 
             entity.HasOne(d => d.Customer).WithMany(p => p.Feedbacks)
                 .HasForeignKey(d => d.CustomerId)
@@ -219,6 +213,9 @@ public partial class SCPMContext : DbContext
             entity.Property(e => e.Address)
                 .IsRequired()
                 .HasMaxLength(512);
+
+            entity.Property(e => e.ParkingLotName).HasMaxLength(128);
+
             entity.Property(e => e.CreatedDate).HasColumnType("datetime");
             entity.Property(e => e.PricePerDay).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.PricePerHour).HasColumnType("decimal(18, 2)");
@@ -324,14 +321,24 @@ public partial class SCPMContext : DbContext
         {
             entity.ToTable("TaskEach");
 
+            entity.Property(e => e.Title)
+                .IsRequired()
+                .HasMaxLength(128);
+
+            entity.Property(e => e.StartDate).HasColumnType("datetime");
+            entity.Property(e => e.EndDate).HasColumnType("datetime");
+
+            entity.Property(e => e.Priority);
+            entity.Property(e => e.Status);
+            
             entity.Property(e => e.Description)
                 .IsRequired()
                 .HasMaxLength(256);
 
-            entity.HasOne(d => d.Owner).WithMany(p => p.TaskEaches)
-                .HasForeignKey(d => d.OwnerId)
+            entity.HasOne(d => d.AssignedTo).WithMany(p => p.TaskEachs)
+                .HasForeignKey(d => d.AssignedToId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_TaskEach_Owner");
+                .HasConstraintName("FK_TaskEach_AssignedTo");
         });
 
         OnModelCreatingPartial(modelBuilder);

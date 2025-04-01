@@ -1,13 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ScpmaBe.Repositories.Entities;
 using ScpmaBe.Repositories.Interfaces;
+using ScpmaBe.Services.Enums;
 using ScpmaBe.Services.Interfaces;
 using ScpmBe.Services.Exceptions;
 
 namespace ScpmaBe.Services.Models
 {
-    public  class AreaService : IAreaService
-    {  
+    public class AreaService : IAreaService
+    {
         private readonly IAreaRepository _areaRepository;
 
         public AreaService(IAreaRepository areaRepository)
@@ -15,46 +16,68 @@ namespace ScpmaBe.Services.Models
             _areaRepository = areaRepository;
         }
 
-        public async Task<List<Area>> GetPaging(int pageIndex, int pageSize)
+        public async Task<AreaResponse> GetById(int id)
         {
-            return await _areaRepository.GetAll().Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
+            var entity = await _areaRepository.GetById(id);
+
+            if (entity == null) throw AppExceptions.NotFoundArea();
+
+           return new AreaResponse
+           {
+               AreaId = entity.AreaId,
+               AreaName = entity.AreaName,
+               RentalType = ((RentalType)entity.RentalType).ToString(),
+               TotalFloors = entity.TotalFloor
+           };
         }
 
-        public async Task<Area> GetById(int id)
+        public async Task<AreaResponse> AddAreaAsync(AddAreaRequest request)
         {
-            var fb = await _areaRepository.GetById(id);
+            var nameExisted = await _areaRepository.GetAll().AnyAsync(x => x.AreaName == request.AreaName && x.ParkingLotId == request.ParkingLotId);
 
-            if (fb == null) throw AppExceptions.NotFoundArea();
+            if (nameExisted) throw AppExceptions.AreaNameExisted();
 
-            return fb;
-        }
-
-        public async Task<Area> AddAreaAsync(AddAreaRequest request)
-        {
             var newArea = new Area
             {
-               AreaName = request.AreaName,
-               ParkingLotId = request.ParkingLotId,
-               RentalType = request.RentalType,
-               Status = request.Status,
-               TotalFloor = 0
+                AreaName = request.AreaName,
+                ParkingLotId = request.ParkingLotId,
+                RentalType = (int)request.RentalType,
+                Status = 1,
+                TotalFloor = 0
             };
 
-            return await _areaRepository.Insert(newArea);
+            var newEntity = await _areaRepository.Insert(newArea);
+
+            return new AreaResponse
+            {
+                AreaId = newEntity.AreaId,
+                AreaName = newEntity.AreaName,
+                RentalType = ((RentalType)newEntity.RentalType).ToString(),
+                TotalFloors = newEntity.TotalFloor
+            };
         }
 
-        public async Task<Area> UpdateAreaAsync(UpdateAreaRequest request)
+        public async Task<AreaResponse> UpdateAreaAsync(UpdateAreaRequest request)
         {
             var updateArea = await _areaRepository.GetById(request.AreaId);
 
             if (updateArea == null) throw AppExceptions.NotFoundArea();
 
+            var nameExisted = await _areaRepository.GetAll().AnyAsync(x => x.AreaName == request.AreaName && x.ParkingLotId == updateArea.ParkingLotId && x.AreaId != request.AreaId);
+
+            if (nameExisted) throw AppExceptions.AreaNameExisted();
+
             updateArea.AreaName = request.AreaName;
-            updateArea.Status = request.Status;
 
             await _areaRepository.Update(updateArea);
 
-            return updateArea;
+            return new AreaResponse
+            {
+                AreaId = updateArea.AreaId,
+                AreaName = updateArea.AreaName,
+                RentalType = ((RentalType)updateArea.RentalType).ToString(),
+                TotalFloors = updateArea.TotalFloor
+            };
         }
 
         public async Task<bool> DeleteAreaAsync(int id)
@@ -75,9 +98,18 @@ namespace ScpmaBe.Services.Models
             }
         }
 
-        public async Task<List<Area>> GetAreasByParkingLot(int parkingLotId)
+        public async Task<List<AreaResponse>> GetAreasByParkingLot(int parkingLotId)
         {
-            return await _areaRepository.GetAll().Where(x => x.ParkingLotId == parkingLotId).ToListAsync(); 
+            return await _areaRepository.GetAll()
+                            .Where(x => x.ParkingLotId == parkingLotId)
+                            .Select(x => new AreaResponse
+                            {
+                                AreaId = x.AreaId,
+                                AreaName = x.AreaName,
+                                RentalType = ((RentalType)x.RentalType).ToString(),
+                                TotalFloors = x.TotalFloor,
+                            })
+                            .ToListAsync();
         }
     }
 }

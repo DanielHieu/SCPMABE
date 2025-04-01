@@ -27,6 +27,4 @@ public partial class Owner : IEntityBase
     public virtual ICollection<Customer> Customers { get; set; } = new List<Customer>();
 
     public virtual ICollection<ParkingLot> ParkingLots { get; set; } = new List<ParkingLot>();
-
-    public virtual ICollection<TaskEach> TaskEaches { get; set; } = new List<TaskEach>();
 }

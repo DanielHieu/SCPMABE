@@ -7,5 +7,6 @@
         public string LicensePlate { get; set; }
 
         public int RentalType { get; set; }
+        public string EntranceImage { get; set; }
     }
 }

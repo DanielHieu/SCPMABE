@@ -1,0 +1,233 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lỗi Thanh Toán VNPay - Hệ Thống Quản Lý Bãi Đỗ Xe</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .error-card {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-top: 50px;
+            text-align: center;
+        }
+
+        .error-icon {
+            color: #dc3545;
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+
+        .error-title {
+            color: #dc3545;
+            font-size: 28px;
+            margin-bottom: 15px;
+        }
+
+        .error-message {
+            font-size: 16px;
+            margin-bottom: 20px;
+            color: #666;
+        }
+
+        .error-code {
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            padding: 10px;
+            margin: 20px 0;
+            color: #666;
+            font-family: monospace;
+            font-size: 14px;
+            display: inline-block;
+        }
+
+        .action-buttons {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background-color: #0d6efd;
+            color: white;
+            border: none;
+        }
+
+            .btn-primary:hover {
+                background-color: #0b5ed7;
+            }
+
+        .btn-outline {
+            background-color: transparent;
+            color: #0d6efd;
+            border: 1px solid #0d6efd;
+        }
+
+            .btn-outline:hover {
+                background-color: #f8f9fa;
+            }
+
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .error-details {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 30px;
+            text-align: left;
+        }
+
+            .error-details p {
+                margin-bottom: 8px;
+                font-size: 14px;
+            }
+
+        @media (max-width: 768px) {
+            .error-card {
+                margin-top: 30px;
+                padding: 20px;
+            }
+
+            .error-title {
+                font-size: 24px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+
+        .vnpay-logo {
+            margin-bottom: 20px;
+            max-width: 200px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="error-card">
+            <img src="https://sandbox.vnpayment.vn/paymentv2/images/brand/logo.svg" alt="VNPay Logo" class="vnpay-logo">
+            <div class="error-icon">
+                <i class="fas fa-exclamation-circle"></i>
+            </div>
+            <h1 class="error-title">Thanh toán không thành công</h1>
+            <p class="error-message">
+                Đã xảy ra lỗi trong quá trình thanh toán của bạn qua cổng thanh toán VNPay.
+                Vui lòng kiểm tra lại thông tin thanh toán hoặc thử lại sau.
+            </p>
+
+            <div class="error-code">
+                <span id="errorCodeDisplay">Mã lỗi: <span id="errorCode">...</span></span>
+            </div>
+
+            <div class="error-details">
+                <p><strong>Mã hợp đồng:</strong> <span id="contractId">...</span></p>
+                <p><strong>Thời gian:</strong> <span id="errorTime">...</span></p>
+                <p><strong>Thông tin lỗi:</strong> <span id="errorDetails">...</span></p>
+            </div>
+
+            <div class="action-buttons">
+                <a href="javascript:history.back()" class="btn btn-outline">Quay lại</a>
+                <a href="#" id="retryPayment" class="btn btn-primary">Thử lại thanh toán</a>
+                <a href="/" class="btn btn-outline">Trang chủ</a>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>© 2025 Hệ Thống Quản Lý Bãi Đỗ Xe. Tất cả các quyền được bảo lưu.</p>
+            <p>Nếu bạn cần hỗ trợ, vui lòng liên hệ <a href="mailto:support@parkinglot.com">support@parkinglot.com</a></p>
+        </div>
+    </div>
+
+    <script>document.addEventListener('DOMContentLoaded', function() {
+            // Parse URL parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            const errorCode = urlParams.get('errorCode') || '99';
+            const paymentContractId = urlParams.get('paymentContractId') || '';
+
+            // Set the error code and contract ID
+            document.getElementById('errorCode').textContent = errorCode;
+            document.getElementById('contractId').textContent = paymentContractId;
+
+            // Set current time
+            const now = new Date();
+            document.getElementById('errorTime').textContent = now.toLocaleString('vi-VN');
+
+            // Define error messages
+            const errorMessages = {
+                '97': 'Chữ ký không hợp lệ',
+                '99': 'Lỗi không xác định từ cổng thanh toán',
+                '01': 'Giao dịch đã thanh toán',
+                '02': 'Giao dịch chưa thanh toán',
+                '04': 'Giao dịch đảo (Khách hàng đã bị trừ tiền tại Ngân hàng nhưng GD chưa thành công ở VNPAY)',
+                '05': 'Giao dịch không thành công',
+                '06': 'Giao dịch bị nghi ngờ gian lận',
+                '07': 'Trừ tiền thành công. Giao dịch bị nghi ngờ gian lận',
+                '09': 'Giao dịch không được phép',
+                '10': 'Xác thực OTP không thành công',
+                '11': 'Giao dịch đã hết hạn chờ thanh toán',
+                '24': 'Giao dịch đã bị hủy',
+                '51': 'Tài khoản không đủ số dư để thanh toán',
+                '65': 'Tài khoản của quý khách đã vượt quá hạn mức thanh toán trong ngày',
+                '75': 'Ngân hàng thanh toán đang bảo trì',
+                '79': 'KH nhập sai mật khẩu thanh toán quá số lần quy định',
+                '99': 'Lỗi không xác định từ cổng thanh toán'
+            };
+
+            // Display error details
+            document.getElementById('errorDetails').textContent = errorMessages[errorCode] || 'Lỗi không xác định';
+
+            // Set retry payment link
+            const retryLink = document.getElementById('retryPayment');
+            if (paymentContractId) {
+                retryLink.href = `/api/payment/create?paymentContractId=${paymentContractId}`;
+            } else {
+                retryLink.style.display = 'none';
+            }
+        });</script>
+</body>
+</html>

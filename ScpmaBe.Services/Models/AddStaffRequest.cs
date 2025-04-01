@@ -1,17 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace ScpmaBe.Services.Models
 {
-    public class RegisterStaffRequest
+    public class AddStaffRequest
     {
-        [Required]
-        public int OwnerId { get; set; }
-
         [Required]
         public string FirstName { get; set; }
 

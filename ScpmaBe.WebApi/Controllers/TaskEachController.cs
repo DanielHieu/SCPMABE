@@ -14,13 +14,6 @@ namespace ScpmaBe.WebApi.Controllers
             _taskEachService = taskEachService;
         }
 
-        [HttpGet("GetTaskEach")]
-        public async Task<IActionResult> GetTaskEachOfOwner(int ownerId)
-        {
-            var getTaskEach = _taskEachService.GetTaskEachOfOwnerAsync(ownerId);
-            return Ok(await getTaskEach);
-        }
-
         [HttpGet("GetById")]
         public async Task<IActionResult> GetById(int id)
         {
@@ -28,8 +21,8 @@ namespace ScpmaBe.WebApi.Controllers
             return Ok(getById);
         }
 
-        [HttpPost("SearchTaskEach")]
-        public async Task<IActionResult> SearchTaskEach(SearchTaskRequest request)
+        [HttpPost("Search")]
+        public async Task<IActionResult> Search([FromBody]SearchTaskRequest request)
         {
             var searchTaskEach = await _taskEachService.SearchTaskEachAsync(request);
 
@@ -51,6 +44,7 @@ namespace ScpmaBe.WebApi.Controllers
                 return BadRequest(ModelState);
 
             var task = await _taskEachService.UpdateTaskEachAsync(request);
+
             return Ok(task);
         }
 
@@ -59,7 +53,15 @@ namespace ScpmaBe.WebApi.Controllers
         {
             var result = await _taskEachService.DeleteTaskEachAsync(id);
 
-            return Ok();
+            return Ok(new { sucess = result });
+        }
+
+        [HttpPost("Complete")]
+        public async Task<IActionResult> Complete(int id)
+        {
+            var result = await _taskEachService.CompleteAsync(id);
+
+            return Ok(new { sucess = result });
         }
     }
 }

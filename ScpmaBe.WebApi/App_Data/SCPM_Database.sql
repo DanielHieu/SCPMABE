@@ -21,22 +21,6 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE TABLE [dbo].[AssignedTask](
-	[AssignedTaskId] [int] IDENTITY(1,1) NOT NULL,
-	[TaskEachId] [int] NOT NULL,
-	[StaffId] [int] NOT NULL,
-	[ShiftDate] [date] NOT NULL,
-	[ShiftTime] [time](7) NOT NULL,
-	[Address] [nvarchar](256) NOT NULL,
-	[Note] [nvarchar](256) NULL,
-	[CreatedDate] [datetime] NOT NULL,
-	[UpdatedDate] [datetime] NOT NULL,
- CONSTRAINT [PK_AssignedTask] PRIMARY KEY CLUSTERED 
-(
-	[AssignedTaskId] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
 /****** Object:  Table [dbo].[Car]    Script Date: 3/23/2025 7:27:58 AM ******/
 SET ANSI_NULLS ON
 GO
@@ -45,11 +29,13 @@ GO
 CREATE TABLE [dbo].[Car](
 	[CarId] [int] IDENTITY(1,1) NOT NULL,
 	[CustomerId] [int] NOT NULL,
+	[Brand] [nvarchar](64) NULL,
 	[Model] [nvarchar](64) NULL,
 	[Color] [nvarchar](64) NULL,
 	[LicensePlate] [nvarchar](64) NOT NULL,
 	[RegistedDate] [datetime] NOT NULL,
 	[Status] [bit] NOT NULL,
+	[Thumbnail]    NVARCHAR (256) NULL
  CONSTRAINT [PK_Car] PRIMARY KEY CLUSTERED 
 (
 	[CarId] ASC
@@ -92,6 +78,9 @@ CREATE TABLE [dbo].[Customer](
 	[Username] [nvarchar](64) NOT NULL,
 	[Password] [nvarchar](128) NOT NULL,
 	[IsActive] [bit] NOT NULL,
+	[Note] nvarchar(256) NULL,
+	[PasswordTemp] nvarchar(128) NULL,
+	[ActivationCode] nvarchar(32) NULL
  CONSTRAINT [PK_Customer] PRIMARY KEY CLUSTERED 
 (
 	[CustomerId] ASC
@@ -114,6 +103,9 @@ CREATE TABLE [dbo].[EntryExitLog](
 	[ExitTime] [datetime] NULL,
 	[RentalType] [int] NOT NULL,
 	[TotalAmount] [decimal](18, 2) NOT NULL,
+	IsPaid bit default(0) NOT NULL,
+	EntranceImage nvarchar(255) NULL,
+	ExitImage nvarchar(255) NULL
  CONSTRAINT [PK_EntryExitLog] PRIMARY KEY CLUSTERED 
 (
 	[EntryExitLogId] ASC
@@ -130,6 +122,9 @@ CREATE TABLE [dbo].[Feedback](
 	[CustomerId] [int] NOT NULL,
 	[Message] [nvarchar](256) NOT NULL,
 	[DateSubmitted] [datetime] NOT NULL,
+	[Status] [int],
+	[ResponsedContent] [nvarchar](256),
+	[ResponsedAt] [dateTime]
  CONSTRAINT [PK_Feedback] PRIMARY KEY CLUSTERED 
 (
 	[FeedbackId] ASC
@@ -145,8 +140,6 @@ CREATE TABLE [dbo].[Floor](
 	[FloorId] [int] IDENTITY(1,1) NOT NULL,
 	[AreaId] [int] NOT NULL,
 	[FloorName] [nvarchar](128) NOT NULL,
-	[NumberEmptyParkingSpace] [int] NOT NULL,
-	[NumberUsedParkingSpace] [int] NOT NULL,
 	[TotalParkingSpace] [int] NOT NULL,
 	[Status] [int] NOT NULL,
  CONSTRAINT [PK_Floor] PRIMARY KEY CLUSTERED 
@@ -182,6 +175,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[ParkingLot](
 	[ParkingLotId] [int] IDENTITY(1,1) NOT NULL,
+	[ParkingLotName] nvarchar(128) NOT NULL,
 	[OwnerId] [int] NOT NULL,
 	[PricePerHour] [decimal](18, 2) NOT NULL,
 	[PricePerDay] [decimal](18, 2) NOT NULL,
@@ -299,21 +293,38 @@ SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[TaskEach](
 	[TaskEachId] [int] IDENTITY(1,1) NOT NULL,
-	[OwnerId] [int] NOT NULL,
+	[AssignedToId] [int] NOT NULL,
+	[Title] nvarchar(128) NOT NULL,
 	[Description] [nvarchar](256) NOT NULL,
+	[StartDate] [datetime] NOT NULL,
+	[EndDate] [datetime] NOT NULL,
+	[Priority] [int] NOT NULL,
+	[Status] [int] NOT NULL
  CONSTRAINT [PK_TaskEach] PRIMARY KEY CLUSTERED 
 (
 	[TaskEachId] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
+/****** Object:  Table [dbo].[FCM]    Script Date: 3/23/2025 7:27:58 AM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[FCM](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[CustomerId] [int] NOT NULL,
+	[DeviceId] [nvarchar](128) NOT NULL,
+	[DeviceToken] [nvarchar](256) NOT NULL,
+ CONSTRAINT [PK_FCM] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
 SET IDENTITY_INSERT [dbo].[Area] ON 
 
 SET IDENTITY_INSERT [dbo].[Area] OFF
-GO
-SET IDENTITY_INSERT [dbo].[AssignedTask] ON 
-
-SET IDENTITY_INSERT [dbo].[AssignedTask] OFF
 GO
 SET IDENTITY_INSERT [dbo].[Car] ON 
 
@@ -382,16 +393,6 @@ REFERENCES [dbo].[ParkingLot] ([ParkingLotId])
 GO
 ALTER TABLE [dbo].[Area] CHECK CONSTRAINT [FK_Area_ParkingLot]
 GO
-ALTER TABLE [dbo].[AssignedTask]  WITH CHECK ADD  CONSTRAINT [FK_AssignedTask_Staff] FOREIGN KEY([StaffId])
-REFERENCES [dbo].[Staff] ([StaffId])
-GO
-ALTER TABLE [dbo].[AssignedTask] CHECK CONSTRAINT [FK_AssignedTask_Staff]
-GO
-ALTER TABLE [dbo].[AssignedTask]  WITH CHECK ADD  CONSTRAINT [FK_AssignedTask_TaskEach] FOREIGN KEY([TaskEachId])
-REFERENCES [dbo].[TaskEach] ([TaskEachId])
-GO
-ALTER TABLE [dbo].[AssignedTask] CHECK CONSTRAINT [FK_AssignedTask_TaskEach]
-GO
 ALTER TABLE [dbo].[Car]  WITH CHECK ADD  CONSTRAINT [FK_Car_Customer] FOREIGN KEY([CustomerId])
 REFERENCES [dbo].[Customer] ([CustomerId])
 GO
@@ -452,8 +453,11 @@ REFERENCES [dbo].[Contract] ([ContractId])
 GO
 ALTER TABLE [dbo].[PaymentContract] CHECK CONSTRAINT [FK_PaymentContract_Contract]
 GO
-ALTER TABLE [dbo].[TaskEach]  WITH CHECK ADD  CONSTRAINT [FK_TaskEach_Owner] FOREIGN KEY([OwnerId])
-REFERENCES [dbo].[Owner] ([OwnerId])
+ALTER TABLE [dbo].[TaskEach]  WITH CHECK ADD  CONSTRAINT [FK_TaskEach_AssignedToId] FOREIGN KEY([AssignedToId])
+REFERENCES [dbo].Staff ([StaffId])
 GO
-ALTER TABLE [dbo].[TaskEach] CHECK CONSTRAINT [FK_TaskEach_Owner]
+ALTER TABLE [dbo].[FCM]  WITH CHECK ADD  CONSTRAINT [FK_FCM_Customer] FOREIGN KEY([CustomerId])
+REFERENCES [dbo].[Customer] ([CustomerId])
+GO
+ALTER TABLE [dbo].[FCM] CHECK CONSTRAINT [FK_FCM_Customer]
 GO

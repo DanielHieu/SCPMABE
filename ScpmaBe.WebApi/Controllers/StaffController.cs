@@ -9,9 +9,69 @@ namespace ScpmaBe.WebApi.Controllers
     public class StaffController : ControllerBase
     {
         private readonly IStaffService _staffService;
-        public StaffController(IStaffService staffService)
+        private readonly IParkingLotService _parkingLotService;
+
+        public StaffController(
+            IStaffService staffService, 
+            IParkingLotService parkingLotService)
         {
             _staffService = staffService;
+            _parkingLotService = parkingLotService;
+        }
+
+        [HttpPost("Login")]
+        public async Task<IActionResult> Login([FromBody] StaffLoginRequest request)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var acc = await _staffService.AuthorizeAsync(request.Username, request.Password);
+
+            return Ok(new
+            {
+                Success = true,
+                User = new
+                {
+                    Id = acc.StaffId,
+                    acc.Email,
+                    acc.FirstName,
+                    acc.LastName,
+                    acc.Phone,
+                    acc.Username
+                }
+            });
+        }
+
+        [HttpPost("Authorize")]
+        public async Task<IActionResult> Authorize([FromBody] StaffLoginRequest request)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var acc = await _staffService.AuthorizeAsync(request.Username, request.Password);
+
+            var parkingLot = await _parkingLotService.GetById(request.ParkingLotId);
+
+            return Ok(new
+            {
+                Success = true,
+                User = new
+                {
+                    Id = acc.StaffId,
+                    acc.Email,
+                    acc.FirstName,
+                    acc.LastName,
+                    acc.Phone,
+                    acc.Username
+                },
+                ParkingLot = parkingLot != null ? new ParkingLotResponse
+                {
+                    ParkingLotId = parkingLot.ParkingLotId,
+                    Address = parkingLot.Address,
+                    Name = parkingLot.ParkingLotName,
+                    ParkingLotName = parkingLot.ParkingLotName
+                } : null
+            });
         }
 
         [HttpGet("GetById")]
@@ -21,47 +81,31 @@ namespace ScpmaBe.WebApi.Controllers
             return Ok(getById);
         }
 
-        [HttpPost("SearchStaff")]
-        public async Task<IActionResult> SearchStaff([FromQuery] SearchStaffRequest request)
+        [HttpPost("Search")]
+        public async Task<IActionResult> Search([FromBody] SearchStaffRequest request)
         {
             var searchStaff = await _staffService.SearchStaffAsync(request);
 
             return Ok(searchStaff);
         }
 
-        [HttpPost("Register")]
-        public async Task<IActionResult> RegisterAccount([FromBody] RegisterStaffRequest request)
+        [HttpPost("Add")]
+        public async Task<IActionResult> AddAccount([FromBody]AddStaffRequest request)
         {
-            if (!ModelState.IsValid) 
+            if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var account = await _staffService.RegisterStaffAsync(request);
+            var account = await _staffService.AddStaffAsync(request);
 
             return Ok(new
             {
                 account.StaffId,
-                account.OwnerId,
                 account.FirstName,
                 account.LastName,
                 account.Phone,
                 account.Username,
                 account.Email,
                 account.IsActive
-            });
-        }
-
-        [HttpPost("Login")]
-        public async Task<IActionResult> LoginAccount([FromBody] LoginStaffRequest request)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var acc = await _staffService.AuthorizeAsync(request.Username, request.Password);
-
-            return Ok(new
-            {
-                acc.StaffId,
-                acc.Username
             });
         }
 
@@ -72,6 +116,7 @@ namespace ScpmaBe.WebApi.Controllers
                 return BadRequest(ModelState);
 
             var acc = await _staffService.UpdateStaffAsync(request);
+
             return Ok(acc);
         }
 
@@ -81,6 +126,38 @@ namespace ScpmaBe.WebApi.Controllers
             var result = await _staffService.DeleteStaffAsync(id);
 
             return Ok();
+        }
+
+        [HttpPost("ResetPassword/{staffId}")]
+        public async Task<IActionResult> ResetPassword(int staffId)
+        {
+            var result = await _staffService.ResetPassword(staffId);
+            return Ok(new { success = result});
+        }
+
+        [HttpGet("GetAll")]
+        public async Task<IActionResult> GetAll()
+        {
+            var result = await _staffService.GetAll();
+            return Ok(result);
+        }
+
+        [HttpGet("{id}/tasks")]
+        public async Task<IActionResult> GetTasks(int id)
+        {
+            var result = await _staffService.GetTasks(id);
+            return Ok(result);
+        }
+
+        [HttpPost("ChangePassword")]
+        public async Task<IActionResult> ChangePassword([FromBody]StaffChangePasswordRequest request)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var result = await _staffService.ChangePasswordAsync(request);
+
+            return Ok(new { success = result });
         }
     }
 }

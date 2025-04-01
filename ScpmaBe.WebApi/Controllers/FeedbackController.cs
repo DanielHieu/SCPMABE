@@ -21,11 +21,18 @@ namespace ScpmaBe.WebApi.Controllers
             return Ok(getFbOfCustomer);
         }
 
-        [HttpGet("GetFeedbacksOfOwner")]
-        public async Task<IActionResult> GetFeedbacksOfOwner(int ownerId)
+        [HttpPost("Search")]
+        public async Task<IActionResult> Search([FromBody] SearchFeedbackRequest request)
         {
-            var getFbOfOwner = await _feedbackService.GetFeedbacksOfOwnerAsync(ownerId);
-            return Ok(getFbOfOwner);
+            var result = await _feedbackService.SearchFeedbacks(new SearchFeedbackRequest
+            {
+                Keyword = request.Keyword,
+                PageIndex = request.PageIndex <= 0 ? 1 : request.PageIndex,
+                PageSize = request.PageSize <= 0 ? 10 : request.PageSize,
+                Status = request.Status
+            });
+
+            return Ok(result);
         }
 
         [HttpGet("GetById")]
@@ -49,6 +56,7 @@ namespace ScpmaBe.WebApi.Controllers
                 return BadRequest(ModelState);
 
             var fb = await _feedbackService.UpdateFeedbackAsync(request);
+
             return Ok(fb);
         }
 
@@ -58,6 +66,30 @@ namespace ScpmaBe.WebApi.Controllers
             var result = await _feedbackService.DeleteFeedbackAsync(id);
 
             return Ok();
+        }
+
+        [HttpPut("{id}/MarkAsRead")]
+        public async Task<IActionResult> MarkAsRead(int id)
+        {
+            var result = await _feedbackService.MarkAsReadAsync(id);
+
+            return Ok(new { success = result});
+        }
+
+        [HttpPost("{id}/Reply")]
+        public async Task<IActionResult> Reply(int id, [FromBody]FeedbackResponseRequest request)
+        {
+            var result = await _feedbackService.ReplyAsync(id, request.Content);
+
+            return Ok(new { success = result });
+        }
+
+        [HttpGet("Count")]
+        public async Task<IActionResult> Count(string status)
+        {
+            var result = await _feedbackService.CountFeedbacksAsync(status);
+            
+            return Ok(result);
         }
     }
 }

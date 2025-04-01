@@ -3,7 +3,8 @@ using ScpmBe.Repositories.Infrastructure;
 
 namespace ScpmaBe.Repositories.Interfaces
 {
-    public interface IAssignedTaskRepository : IRepository<AssignedTask>
+    public interface IParkingStatusSensorRepository : IRepository<ParkingStatusSensor>
     {
+
     }
 }

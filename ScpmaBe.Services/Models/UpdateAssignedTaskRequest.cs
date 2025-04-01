@@ -22,8 +22,5 @@ namespace ScpmaBe.Services.Models
 
         public string Note { get; set; }
 
-        public DateTime CreatedDate { get; set; }
-
-        public DateTime UpdatedDate { get; set; }
     }
 }

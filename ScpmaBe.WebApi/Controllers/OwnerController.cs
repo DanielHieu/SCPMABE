@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ScpmaBe.Services.Helpers;
 using ScpmaBe.Services.Interfaces;
 using ScpmaBe.Services.Models;
 using ScpmaBe.WebApi.Helpers;
@@ -23,9 +24,8 @@ namespace ScpmaBe.WebApi.Controllers
             return Ok(entity);
         }
 
-
-        [HttpPost("Login")]
-        public async Task<IActionResult> LoginAccount([FromBody] LoginOwnerRequest request)
+        [HttpPost("Authorize")]
+        public async Task<IActionResult> Authorize([FromBody] LoginOwnerRequest request)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -38,7 +38,7 @@ namespace ScpmaBe.WebApi.Controllers
                 acc?.Username,
                 acc?.Email,
                 Role = "owner",
-                AccessToken = AccessTokenGenerator.GenerateExpiringAccessToken(DateTime.Now.AddDays(1)),
+                AccessToken = AccessTokenGenerator.GenerateExpiringAccessToken(DateTime.Now.ToVNTime().AddDays(1)),
             });
         }
 

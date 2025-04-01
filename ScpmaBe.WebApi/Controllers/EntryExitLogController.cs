@@ -31,17 +31,6 @@ namespace ScpmaBe.WebApi.Controllers
             return Ok(entity);
         }
 
-        [HttpPut("Update")]
-        public async Task<IActionResult> Update(UpdateEntryExitLogRequest request)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var entity = await _entryExitLogService.UpdateEntryExitLogAsync(request);
-
-            return Ok(entity);
-        }
-
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteEntryExitLog(int id)
         {
@@ -70,6 +59,14 @@ namespace ScpmaBe.WebApi.Controllers
         public async Task<IActionResult> GetEntrancingCars(int parkingLotId)
         {
             var result = await _entryExitLogService.GetEntrancingCars(parkingLotId);
+
+            return Ok(result);
+        }
+
+        [HttpPost("Pay/{id}")]
+        public async Task<IActionResult> Pay(int id, [FromBody]PayFeeRequest request)
+        {
+            var result = await _entryExitLogService.Pay(id, request.ExitImage);
 
             return Ok(result);
         }

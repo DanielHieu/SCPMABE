@@ -9,6 +9,7 @@ namespace ScpmaBe.Repositories.Entities;
 public partial class ParkingLot : IEntityBase
 {
     public int ParkingLotId { get; set; }
+    public string ParkingLotName { get; set; }
 
     public int OwnerId { get; set; }
 

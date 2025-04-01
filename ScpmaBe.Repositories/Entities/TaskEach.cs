@@ -10,11 +10,14 @@ public partial class TaskEach : IEntityBase
 {
     public int TaskEachId { get; set; }
 
-    public int OwnerId { get; set; }
-
+    public int AssignedToId { get; set; }
+    public string Title { get; set; }
     public string Description { get; set; }
+    public int Priority { get; set; }
+    public int Status { get; set; }
 
-    public virtual ICollection<AssignedTask> AssignedTasks { get; set; } = new List<AssignedTask>();
+    public DateTime StartDate { get; set; }
+    public DateTime EndDate { get; set; }
 
-    public virtual Owner Owner { get; set; }
+    public virtual Staff AssignedTo { get; set; }
 }

@@ -56,7 +56,6 @@ namespace ScpmaBe.Services
             updateAcc.FirstName = request.FirstName;
             updateAcc.LastName = request.LastName;
             updateAcc.Phone = request.Phone;
-            updateAcc.IsActive = request.IsActived;
 
             await _ownerRepository.Update(updateAcc);
 

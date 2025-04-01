@@ -2,11 +2,6 @@
 using ScpmaBe.Repositories.Entities;
 using ScpmaBe.Repositories.Interfaces;
 using ScpmBe.Repositories.Infrastructure;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ScpmaBe.Repositories
 {

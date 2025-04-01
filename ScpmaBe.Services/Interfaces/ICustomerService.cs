@@ -5,13 +5,11 @@ namespace ScpmaBe.Services.Interfaces
 {
     public interface ICustomerService
     {
-        Task<List<Customer>> GetPaging(int pageIndex, int pageSize);
-
         Task<List<Customer>> GetCustomersOfOwnerAsync(int ownerId);
 
         Task<Customer> GetById(int id);
 
-        Task<List<Customer>> SearchCustomerAsync(SearchCustomerRequest request);
+        Task<List<CustomerResponse>> SearchCustomerAsync(SearchCustomerRequest request);
 
         Task<Customer> RegisterCustomerAsync(RegisterCustomerRequest request);
 
@@ -20,5 +18,10 @@ namespace ScpmaBe.Services.Interfaces
         Task<Customer> UpdateCustomerAsync(UpdateCustomerRequest request);
 
         Task<bool> DeleteCustomerAsync(int id);
+        Task<bool> ApproveCustomerAsync(int customerId);
+        Task<bool> DisableCustomerAsync(int customerId, string reason);
+        Task<bool> ForgotPasswordAsync(string email);
+        Task<bool> ChangePasswordAsync(ChangePasswordRequest request);
+        Task<bool> ActivateAccountAsync(string code);
     }
 }

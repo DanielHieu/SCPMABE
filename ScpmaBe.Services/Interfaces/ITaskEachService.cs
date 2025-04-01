@@ -1,22 +1,18 @@
-﻿using ScpmaBe.Repositories.Entities;
-using ScpmaBe.Services.Models;
+﻿using ScpmaBe.Services.Models;
 
 namespace ScpmaBe.Services.Interfaces
 {
     public interface ITaskEachService 
     {
-        Task<List<TaskEach>> GetPaging(int pageIndex, int pageSize);
+        Task<TaskEachResponse> GetById(int id);
 
-        Task<List<TaskEach>> GetTaskEachOfOwnerAsync(int ownerId);
+        Task<List<TaskEachResponse>> SearchTaskEachAsync(SearchTaskRequest request);
 
-        Task<TaskEach> GetById(int id);
+        Task<TaskEachResponse> AddTaskEachAsync(AddTaskEachRequest request);
 
-        Task<List<TaskEach>> SearchTaskEachAsync(SearchTaskRequest request);
-
-        Task<TaskEach> AddTaskEachAsync(AddTaskEachRequest request);
-
-        Task<TaskEach> UpdateTaskEachAsync(UpdateTaskEachRequest request);
+        Task<TaskEachResponse> UpdateTaskEachAsync(UpdateTaskEachRequest request);
 
         Task<bool> DeleteTaskEachAsync(int id);
+        Task<bool> CompleteAsync(int id);
     }
 }

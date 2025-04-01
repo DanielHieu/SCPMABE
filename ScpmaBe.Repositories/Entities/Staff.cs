@@ -26,5 +26,5 @@ public partial class Staff : IEntityBase
 
     public bool IsActive { get; set; }
 
-    public virtual ICollection<AssignedTask> AssignedTasks { get; set; } = new List<AssignedTask>();
+    public virtual ICollection<TaskEach> TaskEachs { get; set; } = new List<TaskEach>();
 }

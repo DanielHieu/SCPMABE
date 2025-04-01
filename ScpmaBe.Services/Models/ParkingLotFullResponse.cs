@@ -10,29 +10,37 @@
 
     public class ParkingLotResponse
     {
-        public int Id { get; set; }
+        public int ParkingLotId { get; set; }
+        public string ParkingLotName { get; set; }
         public string Name { get; set; }
         public string Address { get; set; }
+        public double Lat { get; set; }
+        public double Long { get; set; }
+        public decimal PricePerHour { get; set; }
+        public decimal PricePerDay { get; set; }
+        public decimal PricePerMonth { get; set; }
     }
 
     public class AreaResponse
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
+        public int AreaId { get; set; }
+        public string AreaName { get; set; }
         public string RentalType { get;set; }
+        public int TotalFloors { get; set; }
     }
 
     public class FloorResponse
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
+        public int FloorId { get; set; }
+        public string FloorName { get; set; }
         public int AreaId { get; set; }
+        public int TotalParkingSpaces { get; set; }
     }
 
     public class ParkingSpaceResponse
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
+        public int ParkingSpaceId { get; set; }
+        public string ParkingSpaceName { get; set; }
         public int FloorId { get; set; }
         public string Status { get; set; }
     }
