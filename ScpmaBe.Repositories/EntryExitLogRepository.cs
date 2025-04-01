@@ -14,5 +14,4 @@ namespace ScpmaBe.Repositories
             return await Table.FirstOrDefaultAsync(x => x.EntryExitLogId == id);
         }
     }
-
 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ScpmaBe.Services.Enums;
 using ScpmaBe.Services.Interfaces;
 using ScpmaBe.Services.Models;
 
@@ -56,7 +57,7 @@ namespace ScpmaBe.WebApi.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var updateContract = await _contractService.UpdateContractAsync(request); 
+            var updateContract = await _contractService.UpdateContractAsync(request);
             return Ok(updateContract);
         }
 
@@ -65,6 +66,24 @@ namespace ScpmaBe.WebApi.Controllers
         {
             var deleteContract = await _contractService.DeleteContractAsync(id);
             return Ok();
+        }
+
+        [HttpPost("GetByLicensePlateAndParkingLot")]
+        public async Task<IActionResult> GetByLicensePlateAndParkingLot([FromBody] CheckContractRequest request)
+        {
+            var items = await _contractService.SearchContractAsync(new SearchContractRequest
+            {
+                LicensePlate = request.LicensePlate,
+                ParkingLotId = request.ParkingLotId,
+                Status = (int)ContractStatus.Active
+            });
+
+            var contract = items.Count == 0 ? null : items.Select(x => new { x.ContractId, x.StartDate, x.EndDate, Status = (ContractStatus)x.Status }).First();
+
+            return Ok(new
+            {
+                Contract = contract
+            });
         }
     }
 }

@@ -10,7 +10,7 @@ public partial class EntryExitLog : IEntityBase
 {
     public int EntryExitLogId { get; set; }
 
-    public int? ParkingSpaceId { get; set; }
+    public int ParkingSpaceId { get; set; }
 
     public string LicensePlate { get; set; }
 
@@ -22,7 +22,7 @@ public partial class EntryExitLog : IEntityBase
 
     public DateTime EntryTime { get; set; }
 
-    public DateTime ExitTime { get; set; }
+    public DateTime? ExitTime { get; set; }
 
     public int RentalType { get; set; }
 

@@ -1,10 +1,5 @@
 ﻿using ScpmaBe.Repositories.Entities;
 using ScpmaBe.Services.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ScpmaBe.Services.Interfaces
 {
@@ -17,5 +12,6 @@ namespace ScpmaBe.Services.Interfaces
         Task<bool> DeleteFloorAsync(int id);
 
         Task<List<Floor>> GetFloorsByArea(int areaId);
+        Task<List<Floor>> GetFloorsByParkingLot(int parkingLotId);
     }
 }

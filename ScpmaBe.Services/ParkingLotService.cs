@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ScpmaBe.Repositories.Entities;
 using ScpmaBe.Repositories.Interfaces;
+using ScpmaBe.Services.Enums;
 using ScpmaBe.Services.Interfaces;
 using ScpmBe.Services.Exceptions;
 
@@ -9,10 +10,19 @@ namespace ScpmaBe.Services.Models
     public class ParkingLotService : IParkingLotService
     {
         private readonly IParkingLotRepository _parkinglotRepository;
+        private readonly IAreaRepository _areaRepository;
+        private readonly IFloorRepository _floorRepository;
+        private readonly IParkingSpaceRepository _parkingSpaceRepository;
 
-        public ParkingLotService(IParkingLotRepository parkinglotRepository)
+        public ParkingLotService(IParkingLotRepository parkinglotRepository,
+            IParkingSpaceRepository parkingSpaceRepository,
+            IFloorRepository floorRepository,
+            IAreaRepository areaRepository)
         {
             _parkinglotRepository = parkinglotRepository;
+            _parkingSpaceRepository = parkingSpaceRepository;
+            _floorRepository = floorRepository;
+            _areaRepository = areaRepository;
         }
 
         public async Task<List<ParkingLot>> GetPaging(int pageIndex, int pageSize)
@@ -147,6 +157,58 @@ namespace ScpmaBe.Services.Models
             }).ToListAsync();
 
             return parkingLots;
+        }
+
+        public async Task<ParkingLotFullResponse> GetFull(int parkingLotId)
+        {
+            var parkingLot = await _parkinglotRepository.GetById(parkingLotId);
+
+            if (parkingLot == null) throw AppExceptions.NotFoundParkingLot();
+
+            var areas = await _areaRepository.GetAll()
+                                .Where(x => x.ParkingLotId == parkingLotId)
+                                .Select(x => new AreaResponse
+                                {
+                                    Id = x.AreaId,
+                                    Name = x.AreaName,
+                                    RentalType = ((RentalType)x.RentalType).ToString()
+                                }).ToListAsync();
+
+            var floors = await _floorRepository.GetAll()
+                            .Include(x => x.Area)
+                            .Where(x => x.Area.ParkingLotId == parkingLotId)
+                            .Select(x => new FloorResponse
+                            {
+                                Id = x.FloorId,
+                                Name = x.FloorName,
+                                AreaId = x.AreaId
+                            })
+                            .ToListAsync();
+
+            var parkingSpaces = await _parkingSpaceRepository.GetAll()
+                            .Include(x => x.Floor).ThenInclude(x => x.Area)
+                            .Where(x => x.Floor.Area.ParkingLotId == parkingLotId)
+                            .Select(x => new ParkingSpaceResponse
+                            {
+                                Id = x.ParkingSpaceId,
+                                Name = x.ParkingSpaceName,
+                                FloorId = x.FloorId,
+                                Status = ((ParkingSpaceStatus)x.Status).ToString()
+                            })
+                            .ToListAsync();
+
+            return new ParkingLotFullResponse
+            {
+                ParkingLot = new ParkingLotResponse
+                {
+                    Id = parkingLot.ParkingLotId,
+                    Address = parkingLot.Address,
+                    Name = $"PL{parkingLot.ParkingLotId}"
+                },
+                Areas = areas,
+                Floors = floors,
+                ParkingSpaces = parkingSpaces
+            };
         }
     }
 }
