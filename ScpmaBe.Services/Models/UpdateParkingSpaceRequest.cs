@@ -4,6 +4,5 @@
     {
         public int ParkingSpaceId { get; set; }
         public string ParkingSpaceName { get; set; }
-        public int Status { get; set; }
     }
 }

@@ -91,6 +91,9 @@ public partial class SCPMContext : DbContext
             entity.Property(e => e.LicensePlate)
                 .IsRequired()
                 .HasMaxLength(64);
+
+            entity.Property(e => e.Thumbnail).HasMaxLength(256);
+            entity.Property(e => e.Brand).HasMaxLength(64);
             entity.Property(e => e.Model).HasMaxLength(64);
             entity.Property(e => e.RegistedDate).HasColumnType("datetime");
 

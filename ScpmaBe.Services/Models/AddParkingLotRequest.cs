@@ -10,7 +10,7 @@
 
         public decimal PricePerMonth { get; set; }
 
-        public string? Address { get; set; }
+        public string Address { get; set; }
 
         public double? Long { get; set; }
 

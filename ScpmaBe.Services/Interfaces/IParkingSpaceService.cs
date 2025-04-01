@@ -1,16 +1,17 @@
-﻿using ScpmaBe.Repositories.Entities;
-using ScpmaBe.Services.Models;
+﻿using ScpmaBe.Services.Models;
 
 namespace ScpmaBe.Services.Interfaces
 {
     public interface IParkingSpaceService
     {
-        Task<List<ParkingSpace>> GetPaging(int pageIndex, int pageSize);
-        Task<ParkingSpace> GetById(int id);
-        Task<ParkingSpace> AddParkingSpaceAsync(AddParkingSpaceRequest request);
-        Task<ParkingSpace> UpdateParkingSpaceAsync(UpdateParkingSpaceRequest request);
+        Task<ParkingSpaceResponse> GetById(int id);
+        Task<ParkingSpaceResponse> AddParkingSpaceAsync(AddParkingSpaceRequest request);
+        Task<ParkingSpaceResponse> UpdateParkingSpaceAsync(UpdateParkingSpaceRequest request);
         Task<bool> DeleteParkingSpaceAsync(int id);
 
-        Task<List<ParkingSpace>> GetParkingSpacesByFloor(int floorId);
+        Task<List<ParkingSpaceResponse>> GetParkingSpacesByFloor(int floorId);
+
+        Task<bool> ChangeStatus(string apiKey);
+
     }
 }

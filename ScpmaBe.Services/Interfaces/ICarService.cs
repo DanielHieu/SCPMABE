@@ -5,11 +5,10 @@ namespace ScpmaBe.Services.Interfaces
 {
     public interface ICarService
     {
-        Task<List<Car>> GetPaging(int pageIndex, int pageSize);
+        string GetImageFolder();
+        Task<List<CarAndEntranceResponse>> GetCarsOfCustomerAsync(int customerId);
 
-        Task<List<Car>> GetCarsOfCustomerAsync(int customerId);
-
-        Task<Car> GetById(int id);
+        Task<CarAndEntranceResponse> GetById(int id);
 
         Task<List<Car>> SearchCarAsync(SearchCarRequest request);
 

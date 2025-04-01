@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ScpmaBe.Repositories.Entities;
 using ScpmaBe.Repositories.Interfaces;
+using ScpmaBe.Services.Helpers;
 using ScpmaBe.Services.Interfaces;
 using ScpmaBe.Services.Models;
 using ScpmBe.Services.Exceptions;
@@ -57,8 +58,8 @@ namespace ScpmaBe.Services
                 ShiftTime = request.ShiftTime,
                 Address = request.Address,
                 Note = request.Note,
-                CreatedDate = DateTime.Now,
-                UpdatedDate = DateTime.Now
+                CreatedDate = DateTime.Now.ToVNTime(),
+                UpdatedDate = DateTime.Now.ToVNTime(),
             };
 
             return await _assignedTaskRepository.Insert(newAssTask);
@@ -82,10 +83,11 @@ namespace ScpmaBe.Services
             updateAssTask.ShiftTime = request.ShiftTime;
             updateAssTask.Address = request.Address;
             updateAssTask.Note = request.Note;
-            updateAssTask.CreatedDate = request.CreatedDate;
-            updateAssTask.UpdatedDate = DateTime.Now;
+
+            updateAssTask.UpdatedDate = DateTime.Now.ToVNTime();
 
             await _assignedTaskRepository.Update(updateAssTask);
+
             return updateAssTask;
         }
 

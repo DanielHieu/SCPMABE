@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ScpmaBe.Repositories.Entities;
 using ScpmaBe.Repositories.Interfaces;
+using ScpmaBe.Services.Helpers;
 using ScpmaBe.Services.Interfaces;
 using ScpmaBe.Services.Models;
 using ScpmBe.Services.Exceptions;
@@ -52,7 +53,7 @@ namespace ScpmaBe.Services
             {
                 CustomerId = request.CustomerId,
                 Message = request.Message,
-                DateSubmitted = DateTime.Now
+                DateSubmitted = DateTime.Now.ToVNTime()
             };
 
             return await _feedbackRepo.Insert(newFeedBack);
@@ -65,7 +66,6 @@ namespace ScpmaBe.Services
             if (updateFb == null) throw AppExceptions.NotFoundFeedBackId();
 
             updateFb.Message = request.Message;
-            updateFb.DateSubmitted = DateTime.Now;
 
             await _feedbackRepo.Update(updateFb);
 

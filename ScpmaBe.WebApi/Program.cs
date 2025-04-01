@@ -8,11 +8,15 @@ using ScpmaBe.Services.Common;
 using ScpmaBe.Services.Interfaces;
 using ScpmaBe.Services.Models;
 using ScpmaBe.WebApi.Converters;
+using ScpmaBe.WebApi.Helpers;
+using ScpmaBe.WebApi.Jobs;
 using ScpmBe.WebApi.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+builder.Services.AddHostedService<ContractJob>();
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
@@ -29,8 +33,22 @@ builder.Services.AddSwaggerGen();
 
 // Start DI
 builder.Services.AddSingleton<IHashHelper, HashHelper>();
+// Fix for CS7036 and CS1526: Provide the required parameter 'httpContextAccessor' when creating an instance of Utils.
+builder.Services.AddSingleton<Utils>(provider => new Utils(provider.GetRequiredService<IHttpContextAccessor>()));
+
+// AppSettings
+var appSettings = new AppSettings
+{
+    ApplicationUrl = builder.Configuration["AppSettings:ApplicationUrl"],
+    HashSecretKey = builder.Configuration["AppSettings:HashSecretKey"],
+    PaymentBaseUrl = builder.Configuration["AppSettings:PaymentBaseUrl"],
+    TmnCode = builder.Configuration["AppSettings:TmnCode"],
+};
+
+builder.Services.AddSingleton(appSettings);
 
 var cnnString = builder.Configuration.GetConnectionString("DefaultConnection");
+
 builder.Services.AddDbContext<SCPMContext>((optionBuilder) =>
 {
     optionBuilder.UseSqlServer(cnnString);
@@ -62,16 +80,23 @@ builder.Services.AddScoped<IAreaRepository, AreaRepository>();
 builder.Services.AddScoped<IAreaService, AreaService>();
 builder.Services.AddScoped<IEntryExitLogRepository, EntryExitLogRepository>();
 builder.Services.AddScoped<IEntryExitLogService, EntryExitLogService>();
-//builder.Services.AddScoped<IPaymentContractRepository, IPaymentContractRepository>();
+builder.Services.AddScoped<IPaymentContractRepository, PaymentContractRepository>();
 //builder.Services.AddScoped<IPaymentContractService, PaymentContractService>();
+builder.Services.AddScoped<IParkingStatusSensorRepository, ParkingStatusSensorRepository>();
+builder.Services.AddScoped<IParkingStatusSensorService, ParkingStatusSensorService>();
+
+builder.Services.AddScoped<IReportService, ReportService>();
+builder.Services.AddScoped<IImageService, ImageService>();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 //if (app.Environment.IsDevelopment())
 //{
-    
+
 //}
+
+app.UseStaticFiles();
 
 app.UseSwagger();
 app.UseSwaggerUI();

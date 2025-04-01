@@ -9,9 +9,12 @@ namespace ScpmaBe.WebApi.Controllers
     public class StaffController : ControllerBase
     {
         private readonly IStaffService _staffService;
-        public StaffController(IStaffService staffService)
+        private readonly IParkingLotService _parkingLotService;
+        public StaffController(
+            IStaffService staffService, IParkingLotService parkingLotService)
         {
             _staffService = staffService;
+            _parkingLotService = parkingLotService;
         }
 
         [HttpGet("GetById")]
@@ -22,7 +25,7 @@ namespace ScpmaBe.WebApi.Controllers
         }
 
         [HttpPost("SearchStaff")]
-        public async Task<IActionResult> SearchStaff([FromQuery] SearchStaffRequest request)
+        public async Task<IActionResult> SearchStaff([FromBody] SearchStaffRequest request)
         {
             var searchStaff = await _staffService.SearchStaffAsync(request);
 
@@ -32,7 +35,7 @@ namespace ScpmaBe.WebApi.Controllers
         [HttpPost("Register")]
         public async Task<IActionResult> RegisterAccount([FromBody] RegisterStaffRequest request)
         {
-            if (!ModelState.IsValid) 
+            if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             var account = await _staffService.RegisterStaffAsync(request);
@@ -50,18 +53,33 @@ namespace ScpmaBe.WebApi.Controllers
             });
         }
 
-        [HttpPost("Login")]
-        public async Task<IActionResult> LoginAccount([FromBody] LoginStaffRequest request)
+        [HttpPost("Authorize")]
+        public async Task<IActionResult> Authorize([FromBody] StaffLoginRequest request)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             var acc = await _staffService.AuthorizeAsync(request.Username, request.Password);
+            var parkingLot = await _parkingLotService.GetById(request.ParkingLotId);
 
             return Ok(new
             {
-                acc.StaffId,
-                acc.Username
+                Success = true,
+                User = new
+                {
+                    Id = acc.StaffId,
+                    acc.Email,
+                    acc.FirstName,
+                    acc.LastName,
+                    acc.Phone,
+                    acc.Username
+                },
+                ParkingLot = parkingLot != null ? new ParkingLotResponse
+                {
+                    ParkingLotId = parkingLot.ParkingLotId,
+                    Address = parkingLot.Address,
+                    Name = $"PL{parkingLot.ParkingLotId:0#}"
+                } : null
             });
         }
 

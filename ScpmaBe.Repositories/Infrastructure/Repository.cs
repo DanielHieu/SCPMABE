@@ -7,6 +7,7 @@ namespace ScpmBe.Repositories.Infrastructure
     {
 
     }
+
     public interface IRepository<TEntity>
     {
         IQueryable<TEntity> GetAll();

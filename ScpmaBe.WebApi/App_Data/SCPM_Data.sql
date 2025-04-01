@@ -1,4 +1,6 @@
-﻿DECLARE @FirstName NVARCHAR(50) = 'Nguyễn';  -- Ví dụ tên
+﻿-- Password: Pa$$w0rd!
+
+DECLARE @FirstName NVARCHAR(50) = 'Nguyễn';  -- Ví dụ tên
 DECLARE @LastName NVARCHAR(50) = 'Văn A';    -- Ví dụ họ
 DECLARE @Phone NVARCHAR(20) = CONCAT('090', CAST(ABS(CHECKSUM(NEWID())) % 1000000000 AS NVARCHAR(10)));  -- Số điện thoại ngẫu nhiên
 DECLARE @Email NVARCHAR(100) = CONCAT(@FirstName, @LastName, '@example.com');  -- Email
@@ -256,3 +258,55 @@ INSERT INTO dbo.PaymentContract
 VALUES 
     (5, '2025-05-01', '2025-08-01', 320.00, N'Chuyển khoản ngân hàng', NULL, 960.00, 2, N'Đang chờ thanh toán', '2025-05-01 10:00:00', '2025-05-01 10:00:00');
 GO
+
+Update Contract
+set ParkingSpaceId = 31
+Where ContractId = 1
+GO
+UPDATE ParkingSpace
+set status = 3 
+where ParkingSpaceId = 31
+GO
+UPDATE Contract
+SET ParkingSpaceId = 32
+WHERE ContractId = 4
+GO
+UPDATE ParkingSpace
+SET [Status] = 3
+WHERE ParkingSpaceId = 32
+GO
+
+UPDATE Contract
+SET ParkingSpaceId = 34
+WHERE ContractId = 2
+
+UPDATE ParkingSpace
+SET [Status] = 3
+WHERE ParkingSpaceId = 34
+
+UPDATE Contract
+SET ParkingSpaceId = 37
+WHERE ContractId = 3
+
+UPDATE ParkingSpace
+SET [Status] = 3
+WHERE ParkingSpaceId = 37
+
+
+UPDATE Contract
+SET ParkingSpaceId = 40
+WHERE ContractId = 5
+
+UPDATE ParkingSpace
+SET [Status] = 3
+WHERE ParkingSpaceId = 40
+
+Update PaymentContract
+SET [Status] = 5
+GO
+
+Insert Into ParkingStatusSensor(ParkingSpaceId, ApiKey, IsActive)
+VALUES (1, 'mGxT45QsnArKxoaF6a7Dtoa4GDZ0oeLkLp546HEPNaepgEA9pwpnRDMFlGlkDRbK', 1),(2, 'Gfd72f6kuGLHIK04aQ6qZBfV9pS9VPNlPjo5ECtia9baZQ0tRSao4gRDjAXfS100
+', 1),(33, '14ppi7UfpM5GY0TgS2eUlJOCBGH1ZIpQlzpQ9QodzRAtekRiyOKYS07WRIpUVpu0
+', 1),(34, 'fsdiCvFmYCu19z174V8gPSLLC4SF705ApuczszOqnWxufcjynAdlu79JjAdm7Kkw
+', 1)

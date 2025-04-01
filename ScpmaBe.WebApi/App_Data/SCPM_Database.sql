@@ -45,11 +45,13 @@ GO
 CREATE TABLE [dbo].[Car](
 	[CarId] [int] IDENTITY(1,1) NOT NULL,
 	[CustomerId] [int] NOT NULL,
+	[Brand] [nvarchar](64) NULL,
 	[Model] [nvarchar](64) NULL,
 	[Color] [nvarchar](64) NULL,
 	[LicensePlate] [nvarchar](64) NOT NULL,
 	[RegistedDate] [datetime] NOT NULL,
 	[Status] [bit] NOT NULL,
+	[Thumbnail]    NVARCHAR (256) NULL
  CONSTRAINT [PK_Car] PRIMARY KEY CLUSTERED 
 (
 	[CarId] ASC
@@ -114,6 +116,7 @@ CREATE TABLE [dbo].[EntryExitLog](
 	[ExitTime] [datetime] NULL,
 	[RentalType] [int] NOT NULL,
 	[TotalAmount] [decimal](18, 2) NOT NULL,
+	IsPaid bit default(0) NOT NULL
  CONSTRAINT [PK_EntryExitLog] PRIMARY KEY CLUSTERED 
 (
 	[EntryExitLogId] ASC
@@ -145,8 +148,6 @@ CREATE TABLE [dbo].[Floor](
 	[FloorId] [int] IDENTITY(1,1) NOT NULL,
 	[AreaId] [int] NOT NULL,
 	[FloorName] [nvarchar](128) NOT NULL,
-	[NumberEmptyParkingSpace] [int] NOT NULL,
-	[NumberUsedParkingSpace] [int] NOT NULL,
 	[TotalParkingSpace] [int] NOT NULL,
 	[Status] [int] NOT NULL,
  CONSTRAINT [PK_Floor] PRIMARY KEY CLUSTERED 

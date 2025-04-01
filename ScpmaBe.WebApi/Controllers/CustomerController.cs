@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using ScpmaBe.Services;
+﻿using Microsoft.AspNetCore.Mvc;
 using ScpmaBe.Services.Interfaces;
 using ScpmaBe.Services.Models;
 
@@ -24,7 +22,7 @@ namespace ScpmaBe.WebApi.Controllers
         }
 
         [HttpPost("SearchCustomer")]
-        public async Task<IActionResult> SearchCustomer([FromQuery] SearchCustomerRequest request)
+        public async Task<IActionResult> SearchCustomer([FromBody] SearchCustomerRequest request)
         {
             var searchCustomer = await _customerService.SearchCustomerAsync(request);
 
@@ -39,16 +37,14 @@ namespace ScpmaBe.WebApi.Controllers
 
             var account = await _customerService.RegisterCustomerAsync(request);
 
-            return Ok(new
+            return Ok(new CustomerResponse
             {
-                account.CustomerId,
-                account.OwnerId,
-                account.FirstName,
-                account.LastName,
-                account.Phone,
-                account.Username,
-                account.Email,
-                account.IsActive
+                CustomerId = account.CustomerId,
+                Email = account.Email,
+                FirstName = account.FirstName,
+                LastName = account.LastName,
+                Phone = account.Phone,
+                Username = account.Username
             });
         }
 
@@ -62,7 +58,7 @@ namespace ScpmaBe.WebApi.Controllers
 
             return Ok(new
             {
-                acc.OwnerId,
+                acc.CustomerId,
                 acc.Username
             });
         }
@@ -74,6 +70,7 @@ namespace ScpmaBe.WebApi.Controllers
                 return BadRequest(ModelState);
 
             var acc = await _customerService.UpdateCustomerAsync(request);
+
             return Ok(acc);
         }
 

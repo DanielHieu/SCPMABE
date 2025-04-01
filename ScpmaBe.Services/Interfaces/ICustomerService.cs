@@ -5,13 +5,11 @@ namespace ScpmaBe.Services.Interfaces
 {
     public interface ICustomerService
     {
-        Task<List<Customer>> GetPaging(int pageIndex, int pageSize);
-
         Task<List<Customer>> GetCustomersOfOwnerAsync(int ownerId);
 
         Task<Customer> GetById(int id);
 
-        Task<List<Customer>> SearchCustomerAsync(SearchCustomerRequest request);
+        Task<List<CustomerResponse>> SearchCustomerAsync(SearchCustomerRequest request);
 
         Task<Customer> RegisterCustomerAsync(RegisterCustomerRequest request);
 

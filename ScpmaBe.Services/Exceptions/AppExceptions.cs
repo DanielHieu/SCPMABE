@@ -1,10 +1,16 @@
-﻿namespace ScpmBe.Services.Exceptions
+﻿
+namespace ScpmBe.Services.Exceptions
 {
     public static class AppExceptions
     {
+        public static AppException BadRequest(string message)
+        {
+            return new BadRequestException("", message);
+        }
+
         public static AppException BadRequestUserExists()
         {
-            return new BadRequestException("MSG01", "Username already exists");
+            return new BadRequestException("MSG01", "Username or Email already exists");
         }
         public static AppException BadRequestUsernameIsInvalid()
         {
@@ -96,6 +102,16 @@
         public static AppException EmptySearchFields()
         {
             return new BadRequestException("MSG20", "Please fill in information.");
+        }
+
+        public static AppException PaymentAlreadyCompleted()
+        {
+            return new BadRequestException("MSG21", "Payment contract is completed.");
+        }
+
+        public static AppException AreaNameExisted()
+        {
+            return new BadRequestException("MSG22", "Area name existed.");
         }
     }
 }

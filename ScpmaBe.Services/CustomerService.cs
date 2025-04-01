@@ -10,14 +10,12 @@ namespace ScpmaBe.Services
     public class CustomerService : ICustomerService
     {
         private readonly ICustomerRepository _customerRepository;
-        private readonly IOwnerRepository _ownerRepository;
         private readonly IHashHelper _hashHelper;
 
         public CustomerService(ICustomerRepository customerRepository, IHashHelper hashHelper, IOwnerRepository ownerRepository)
         {
             _customerRepository = customerRepository;
             _hashHelper = hashHelper;
-            _ownerRepository = ownerRepository;
         }
 
         public async Task<List<Customer>> GetPaging(int pageIndex, int pageSize)
@@ -40,7 +38,7 @@ namespace ScpmaBe.Services
             return customer;
         }
 
-        public async Task<List<Customer>> SearchCustomerAsync(SearchCustomerRequest request)
+        public async Task<List<CustomerResponse>> SearchCustomerAsync(SearchCustomerRequest request)
         {
             var query = _customerRepository.GetAll();
 
@@ -51,10 +49,9 @@ namespace ScpmaBe.Services
                             (!string.IsNullOrEmpty(s.LastName) && s.LastName.Contains(request.Keyword)) ||
                             (!string.IsNullOrEmpty(s.Phone) && s.Phone.Contains(request.Keyword)));
 
-            var customers = await query.Select(s => new Customer
+            var customers = await query.Select(s => new CustomerResponse
             {
                 CustomerId = s.CustomerId,
-                OwnerId = s.OwnerId,
                 FirstName = s.FirstName,
                 LastName = s.LastName,
                 Phone = s.Phone,
@@ -71,28 +68,21 @@ namespace ScpmaBe.Services
             if (string.IsNullOrEmpty(request.Username) || request.Username.Length < 4)
                 throw AppExceptions.BadRequestUsernameIsInvalid();
 
-            var ownerExists = await _ownerRepository.ExistsByIdAsync(request.OwnerId);
-
-            if (!ownerExists)
-            {
-                throw AppExceptions.NotFoundOnwerId(); // Return fail if OwnerId not existed.
-            }
-
             // Check if username already exists
-            var exstingAcc = await _customerRepository.GetAll().FirstOrDefaultAsync(x => x.Username == request.Username);
+            var exstingAcc = await _customerRepository.GetAll().FirstOrDefaultAsync(x => x.Username == request.Username || x.Email == request.Email);
 
             if (exstingAcc != null) throw AppExceptions.BadRequestUserExists();
 
             var newAcc = new Customer
             {
-                OwnerId = request.OwnerId,
+                OwnerId = 1,
                 Username = request.Username,
                 Password = _hashHelper.HashPassword(request.Password),
                 FirstName = request.FirstName,
                 LastName = request.LastName,
                 Phone = request.Phone,
                 Email = request.Email,
-                IsActive = request.IsActive
+                IsActive = true
             };
 
             return await _customerRepository.Insert(newAcc);
@@ -120,12 +110,9 @@ namespace ScpmaBe.Services
 
             if (updateAcc == null) throw AppExceptions.NotFoundAccount();
 
-            updateAcc.CustomerId = request.CustomerId;
-            updateAcc.Email = request.Email;
             updateAcc.FirstName = request.FirstName;
             updateAcc.LastName = request.LastName;
             updateAcc.Phone = request.Phone;
-            updateAcc.IsActive = request.IsActive;
 
             await _customerRepository.Update(updateAcc);
 
