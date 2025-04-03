@@ -1,4 +1,6 @@
-﻿DECLARE @FirstName NVARCHAR(50) = 'Nguyễn';  -- Ví dụ tên
+﻿-- Password: Pa$$w0rd!
+
+DECLARE @FirstName NVARCHAR(50) = 'Nguyễn';  -- Ví dụ tên
 DECLARE @LastName NVARCHAR(50) = 'Văn A';    -- Ví dụ họ
 DECLARE @Phone NVARCHAR(20) = CONCAT('090', CAST(ABS(CHECKSUM(NEWID())) % 1000000000 AS NVARCHAR(10)));  -- Số điện thoại ngẫu nhiên
 DECLARE @Email NVARCHAR(100) = CONCAT(@FirstName, @LastName, '@example.com');  -- Email

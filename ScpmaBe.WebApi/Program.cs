@@ -65,7 +65,7 @@ builder.Services.AddScoped<IAreaRepository, AreaRepository>();
 builder.Services.AddScoped<IAreaService, AreaService>();
 builder.Services.AddScoped<IEntryExitLogRepository, EntryExitLogRepository>();
 builder.Services.AddScoped<IEntryExitLogService, EntryExitLogService>();
-//builder.Services.AddScoped<IPaymentContractRepository, IPaymentContractRepository>();
+builder.Services.AddScoped<IPaymentContractRepository, PaymentContractRepository>();
 //builder.Services.AddScoped<IPaymentContractService, PaymentContractService>();
 
 var app = builder.Build();

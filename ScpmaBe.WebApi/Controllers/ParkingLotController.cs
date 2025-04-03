@@ -21,6 +21,7 @@ namespace ScpmaBe.WebApi.Controllers
             return Ok(new
             {
                 entity.ParkingLotId,
+                Name = $"PL{entity.ParkingLotId:0#}",
                 entity.Address,
                 entity.Lat,
                 entity.Long,
@@ -38,6 +39,7 @@ namespace ScpmaBe.WebApi.Controllers
             return Ok(new
             {
                 entity.ParkingLotId,
+                Name = $"PL{entity.ParkingLotId:0#}",
                 entity.Address,
                 entity.Lat,
                 entity.Long,
@@ -58,6 +60,7 @@ namespace ScpmaBe.WebApi.Controllers
             return Ok(new
             {
                 entity.ParkingLotId,
+                Name = $"PL{entity.ParkingLotId:0#}",
                 entity.Address,
                 entity.Lat,
                 entity.Long,
@@ -83,10 +86,18 @@ namespace ScpmaBe.WebApi.Controllers
             return Ok(result);
         }
 
-        [HttpGet("GetFull/{id}")]
+        [HttpGet("{id}/Full")]
         public async Task<IActionResult> GetFull(int id)
         {
             var result = await _parkingLotService.GetFull(id);
+
+            return Ok(result);
+        }
+
+        [HttpGet("{id}/SummaryStatuses")]
+        public async Task<IActionResult> GetSummaryStatusesResponse(int id)
+        {
+            var result = await _parkingLotService.GetSummaryStatuses(id);
 
             return Ok(result);
         }

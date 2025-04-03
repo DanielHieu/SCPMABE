@@ -1,4 +1,5 @@
-﻿namespace ScpmBe.Services.Exceptions
+﻿
+namespace ScpmBe.Services.Exceptions
 {
     public static class AppExceptions
     {
@@ -96,6 +97,11 @@
         public static AppException EmptySearchFields()
         {
             return new BadRequestException("MSG20", "Please fill in information.");
+        }
+
+        internal static Exception PaymentAlreadyCompleted()
+        {
+            return new BadRequestException("MSG21", "Payment contract is completed.");
         }
     }
 }

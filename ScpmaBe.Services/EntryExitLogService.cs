@@ -193,12 +193,17 @@ namespace ScpmaBe.Services.Models
                 RentalType = ((RentalType)entranceEntity.RentalType).ToString(),
                 Contract = contract != null ? new ContractResponse
                 {
-                    Status = ((ContractStatus)contract.Status),
+                    ContractId = contract.ContractId,
+                    Status = ((ContractStatus)contract.Status).ToString(),
                     StartDate = contract.StartDate.ToDateTime(TimeOnly.MinValue),
                     EndDate = contract.EndDate.ToDateTime(TimeOnly.MaxValue),
-                    Id = contract.ContractId,
                     ParkingSpaceId = contract.ParkingSpaceId,
-                    LicensePlate = contract.Car.LicensePlate
+                    Car = new CarResponse
+                    {
+                        LicensePlate = contract.Car.LicensePlate,
+                        Model = contract.Car.Model,
+                        Color = contract.Car.Color,
+                    }
                 } : null,
                 LicensePlate = entranceEntity.LicensePlate,
                 ParkingSpaceId = entranceEntity.ParkingSpaceId,

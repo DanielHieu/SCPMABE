@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using ScpmaBe.Services;
+﻿using Microsoft.AspNetCore.Mvc;
 using ScpmaBe.Services.Interfaces;
 using ScpmaBe.Services.Models;
 
@@ -62,7 +60,7 @@ namespace ScpmaBe.WebApi.Controllers
 
             return Ok(new
             {
-                acc.OwnerId,
+                acc.CustomerId,
                 acc.Username
             });
         }
@@ -74,6 +72,7 @@ namespace ScpmaBe.WebApi.Controllers
                 return BadRequest(ModelState);
 
             var acc = await _customerService.UpdateCustomerAsync(request);
+
             return Ok(acc);
         }
 

@@ -69,14 +69,21 @@ namespace ScpmaBe.WebApi.Jobs
 
             var today = DateTime.Today;
             var expiredContracts = await dbContext.Contracts
-                .Where(c => c.EndDate.ToDateTime(TimeOnly.MinValue) < today && c.Status != (int)ContractStatus.Expired)
-                .ToListAsync(stoppingToken);
+                                            .Where(c => c.EndDate.ToDateTime(TimeOnly.MinValue) < today && c.Status != (int)ContractStatus.Expired)
+                                            .ToListAsync(stoppingToken);
 
             if (expiredContracts.Any())
             {
                 foreach (var contract in expiredContracts)
                 {
                     contract.Status = (int)ContractStatus.Expired;
+                    contract.UpdatedDate = DateTime.Now;
+                    contract.Note = "Contract expired";
+
+                    dbContext.ParkingSpaces
+                        .Where(p => p.ParkingSpaceId == contract.ParkingSpaceId)
+                        .ToList()
+                        .ForEach(p => p.Status = (int)ParkingSpaceStatus.Available);
 
                     _logger.LogInformation("Contract {ContractId} marked as expired", contract.ContractId);
                 }

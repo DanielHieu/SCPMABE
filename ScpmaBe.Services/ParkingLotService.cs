@@ -131,29 +131,26 @@ namespace ScpmaBe.Services.Models
             }
         }
 
-        public async Task<List<ParkingLot>> Search(SearchParkingLotRequest request)
+        public async Task<List<ParkingLotResponse>> Search(SearchParkingLotRequest request)
         {
             var query = _parkinglotRepository.GetAll();
 
             if (!string.IsNullOrEmpty(request.Keyword))
             {
                 query = query.Where(x => x.ParkingLotId.ToString().Contains(request.Keyword) ||
-                                        (!string.IsNullOrEmpty(x.Address) && x.Address.Contains(request.Keyword))
-                                    );
+                                   (!string.IsNullOrEmpty(x.Address) && x.Address.Contains(request.Keyword)));
             }
 
-            var parkingLots = await query.Select(x => new ParkingLot
+            var parkingLots = await query.Select(x => new ParkingLotResponse
             {
-                ParkingLotId = x.ParkingLotId,
-                OwnerId = x.OwnerId,
+                Id = x.ParkingLotId,
+                Name = $"PL{x.ParkingLotId:0#}",
                 Address = x.Address,
-                Lat = x.Lat,
-                Long = x.Long,
+                Lat = x.Lat.HasValue ? x.Lat.Value : 0f,
+                Long = x.Long.HasValue ? x.Long.Value : 0f,
                 PricePerDay = x.PricePerDay,
                 PricePerHour = x.PricePerHour,
-                PricePerMonth = x.PricePerMonth,
-                CreatedDate = x.CreatedDate,
-                UpdatedDate = x.UpdatedDate
+                PricePerMonth = x.PricePerMonth
             }).ToListAsync();
 
             return parkingLots;
@@ -166,24 +163,24 @@ namespace ScpmaBe.Services.Models
             if (parkingLot == null) throw AppExceptions.NotFoundParkingLot();
 
             var areas = await _areaRepository.GetAll()
-                                .Where(x => x.ParkingLotId == parkingLotId)
-                                .Select(x => new AreaResponse
-                                {
-                                    Id = x.AreaId,
-                                    Name = x.AreaName,
-                                    RentalType = ((RentalType)x.RentalType).ToString()
-                                }).ToListAsync();
+                                    .Where(x => x.ParkingLotId == parkingLotId)
+                                    .Select(x => new AreaResponse
+                                    {
+                                        Id = x.AreaId,
+                                        Name = x.AreaName,
+                                        RentalType = ((RentalType)x.RentalType).ToString()
+                                    }).ToListAsync();
 
             var floors = await _floorRepository.GetAll()
-                            .Include(x => x.Area)
-                            .Where(x => x.Area.ParkingLotId == parkingLotId)
-                            .Select(x => new FloorResponse
-                            {
-                                Id = x.FloorId,
-                                Name = x.FloorName,
-                                AreaId = x.AreaId
-                            })
-                            .ToListAsync();
+                                    .Include(x => x.Area)
+                                    .Where(x => x.Area.ParkingLotId == parkingLotId)
+                                    .Select(x => new FloorResponse
+                                    {
+                                        Id = x.FloorId,
+                                        Name = x.FloorName,
+                                        AreaId = x.AreaId
+                                    })
+                                    .ToListAsync();
 
             var parkingSpaces = await _parkingSpaceRepository.GetAll()
                             .Include(x => x.Floor).ThenInclude(x => x.Area)
@@ -203,11 +200,59 @@ namespace ScpmaBe.Services.Models
                 {
                     Id = parkingLot.ParkingLotId,
                     Address = parkingLot.Address,
-                    Name = $"PL{parkingLot.ParkingLotId}"
+                    Name = $"PL{parkingLot.ParkingLotId:0#}"
                 },
                 Areas = areas,
                 Floors = floors,
                 ParkingSpaces = parkingSpaces
+            };
+        }
+
+        public async Task<ParkingLotSummaryStatusesResponse> GetSummaryStatuses(int parkingLotId)
+        {
+            var parkingLot = await _parkinglotRepository.GetById(parkingLotId);
+
+            if (parkingLot == null) throw AppExceptions.NotFoundParkingLot();
+
+            var totalAWalkinSpaces = await _parkingSpaceRepository
+                                                .GetAll()
+                                                .Include(x => x.Floor).ThenInclude(x => x.Area)
+                                                .Where(x => x.Floor.Area.RentalType == (int)RentalType.Walkin &&
+                                                            x.Floor.Area.ParkingLotId == parkingLotId &&
+                                                            x.Status == (int)ParkingSpaceStatus.Available)
+                                                .CountAsync();
+
+            var totalUWalkinSpaces = await _parkingSpaceRepository
+                                                .GetAll()
+                                                .Include(x => x.Floor).ThenInclude(x => x.Area)
+                                                .Where(x => x.Floor.Area.RentalType == (int)RentalType.Walkin && 
+                                                            x.Floor.Area.ParkingLotId == parkingLotId && 
+                                                            x.Status != (int)ParkingSpaceStatus.Available)
+                                                .CountAsync();
+
+            var totalAContractSpaces = await _parkingSpaceRepository
+                                                 .GetAll()
+                                                 .Include(x => x.Floor).ThenInclude(x => x.Area)
+                                                 .Where(x => x.Floor.Area.RentalType == (int)RentalType.Contract &&
+                                                             x.Floor.Area.ParkingLotId == parkingLotId &&
+                                                             x.Status == (int)ParkingSpaceStatus.Available)
+                                                 .CountAsync();
+
+            var totalUContractSpaces = await _parkingSpaceRepository
+                                                .GetAll()
+                                                .Include(x => x.Floor).ThenInclude(x => x.Area)
+                                                .Where(x => x.Floor.Area.RentalType == (int)RentalType.Contract &&
+                                                            x.Floor.Area.ParkingLotId == parkingLotId &&
+                                                            x.Status != (int)ParkingSpaceStatus.Available)
+                                                .CountAsync();
+
+            return new ParkingLotSummaryStatusesResponse
+            {
+                ParkingLotId = parkingLotId,
+                NumberOfAContracts = totalAContractSpaces,
+                NumberOfAWalkins = totalAWalkinSpaces,
+                NumberOfUContracts = totalUContractSpaces,
+                NumberOfUWalkins = totalUWalkinSpaces
             };
         }
     }

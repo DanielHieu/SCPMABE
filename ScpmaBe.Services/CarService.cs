@@ -91,9 +91,15 @@ namespace ScpmaBe.Services
 
             //check if customerid exist
             var existingCustomer = await _customerRepository.CustomerIdExsistAsync(request.CustomerId);
+
             if (!existingCustomer) throw AppExceptions.NotFoundCustomerId();
 
-            var existingLiPLa = await _carRepository.GetAll().FirstOrDefaultAsync(c => c.LicensePlate == request.LicensePlate);
+            var existingLiPLa = await _carRepository
+                                        .GetAll()
+                                        .FirstOrDefaultAsync(c => 
+                                            c.CarId != request.CarId && 
+                                            c.LicensePlate == request.LicensePlate);
+
             if (existingLiPLa != null) throw AppExceptions.BadRequestLicensePlateExists();
 
             updateCar.CarId = request.CarId;

@@ -11,8 +11,9 @@ namespace ScpmaBe.Services.Interfaces
         Task<ParkingLot> UpdateParkingLotAsync(UpdateParkingLotRequest request);
         Task<bool> DeleteParkingLotAsync(int id);
 
-        Task<List<ParkingLot>> Search(SearchParkingLotRequest request);
+        Task<List<ParkingLotResponse>> Search(SearchParkingLotRequest request);
 
         Task<ParkingLotFullResponse> GetFull(int parkingLotId);
+        Task<ParkingLotSummaryStatusesResponse> GetSummaryStatuses(int parkingLotId);
     }
 }

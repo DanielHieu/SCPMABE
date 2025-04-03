@@ -16,13 +16,6 @@ namespace ScpmaBe.WebApi.Controllers
             _contractService = contractService;
         }
 
-        [HttpGet("GetContractsOfOwner")]
-        public async Task<IActionResult> GetContractsOfOwner(int ownerId)
-        {
-            var getParSpa = await _contractService.GetContractsOfOwnerAsync(ownerId);
-            return Ok(getParSpa);
-        }
-
         [HttpGet("GetContractsOfCustomer")]
         public async Task<IActionResult> GetContractsOfCustomer(int customerId)
         {
@@ -78,12 +71,73 @@ namespace ScpmaBe.WebApi.Controllers
                 Status = (int)ContractStatus.Active
             });
 
-            var contract = items.Count == 0 ? null : items.Select(x => new { x.ContractId, x.StartDate, x.EndDate, Status = (ContractStatus)x.Status }).First();
+            var contract =
+                items.Count == 0 ? null :
+                items.Select(x => new
+                {
+                    x.ContractId,
+                    x.StartDate,
+                    x.EndDate,
+                    x.Status
+                }).First();
 
             return Ok(new
             {
                 Contract = contract
             });
+        }
+
+
+        [HttpPost("{contractId}/approve")]
+        public async Task<IActionResult> Approve(int contractId)
+        {
+            var result = await _contractService.Approve(contractId);
+
+            return Ok(result);
+        }
+
+        [HttpPost("{contractId}/pay")]
+        public async Task<IActionResult> Pay(int contractId)
+        {
+            var result = await _contractService.Pay(contractId);
+            return Ok(result);
+        }
+
+        [HttpPost("{contractId}/complete")]
+        public async Task<IActionResult> Complete(int contractId)
+        {
+            var result = await _contractService.Complete(contractId);
+            return Ok(result);
+        }
+
+        [HttpGet("GetContractPendings")]
+        public async Task<IActionResult> GetContractPendings()
+        {
+            return Ok(new object[] { });
+        }
+
+        [HttpGet("GetContractRejecteds")]
+        public async Task<IActionResult> GetContractRejecteds()
+        {
+            return Ok(new object[] { });
+        }
+
+        [HttpGet("GetContractApproveds")]
+        public async Task<IActionResult> GetContractApproveds()
+        {
+            return Ok(new object[] { });
+        }
+
+        [HttpGet("GetContractPaids")]
+        public async Task<IActionResult> GetContractPaids()
+        {
+            return Ok(new object[] { });
+        }
+
+        [HttpGet("GetContractActivateds")]
+        public async Task<IActionResult> GetContractActivateds()
+        {
+            return Ok(new object[] { });
         }
     }
 }
