@@ -275,3 +275,29 @@ UPDATE ParkingSpace
 SET [Status] = 3
 WHERE ParkingSpaceId = 32
 GO
+
+UPDATE Contract
+SET ParkingSpaceId = 34
+WHERE ContractId = 2
+
+UPDATE ParkingSpace
+SET [Status] = 3
+WHERE ParkingSpaceId = 34
+
+UPDATE Contract
+SET ParkingSpaceId = 37
+WHERE ContractId = 3
+
+UPDATE ParkingSpace
+SET [Status] = 3
+WHERE ParkingSpaceId = 37
+
+
+UPDATE Contract
+SET ParkingSpaceId = 40
+WHERE ContractId = 5
+
+UPDATE ParkingSpace
+SET [Status] = 3
+WHERE ParkingSpaceId = 40
+
