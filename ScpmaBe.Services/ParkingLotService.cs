@@ -143,7 +143,7 @@ namespace ScpmaBe.Services.Models
 
             var parkingLots = await query.Select(x => new ParkingLotResponse
             {
-                Id = x.ParkingLotId,
+                ParkingLotId = x.ParkingLotId,
                 Name = $"PL{x.ParkingLotId:0#}",
                 Address = x.Address,
                 Lat = x.Lat.HasValue ? x.Lat.Value : 0f,
@@ -198,7 +198,7 @@ namespace ScpmaBe.Services.Models
             {
                 ParkingLot = new ParkingLotResponse
                 {
-                    Id = parkingLot.ParkingLotId,
+                    ParkingLotId = parkingLot.ParkingLotId,
                     Address = parkingLot.Address,
                     Name = $"PL{parkingLot.ParkingLotId:0#}"
                 },
