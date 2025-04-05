@@ -279,6 +279,32 @@ namespace ScpmaBe.Services
             }
         }
 
+        public async Task<bool> Reject(int contractId)
+        {
+            var paymentContract = await _paymentContractRepository
+                                    .GetAll()
+                                    .Where(x => x.ContractId == contractId)
+                                    .OrderByDescending((x => x.CreatedDate))
+                                    .FirstOrDefaultAsync();
+
+            if (paymentContract == null) return false;
+
+            if (paymentContract.Status == (int)PaymentContractStatus.Completed)
+            {
+                throw AppExceptions.PaymentAlreadyCompleted();
+            }
+
+            if (paymentContract.Status == (int)PaymentContractStatus.Pending)
+            {
+                paymentContract.Status = (int)PaymentContractStatus.Rejected;
+                paymentContract.UpdatedDate = DateTime.Now;
+
+                await _paymentContractRepository.Update(paymentContract);
+            }
+
+            return true;
+        }
+
         public async Task<bool> Approve(int contractId)
         {
             var paymentContract = await _paymentContractRepository

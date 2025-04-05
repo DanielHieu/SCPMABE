@@ -13,5 +13,6 @@ namespace ScpmaBe.Services.Interfaces
         Task<List<EntryExitLog>> Search(SearchEntryExitLogRequest request);
         Task<CalculateFeeResponse> CalculateFeeAsync(CalculateFeeRequest request);
         Task<List<EntrancingCarResponse>> GetEntrancingCars(int parkingLotId);
+        Task<bool> Pay(int id);
     }
 }

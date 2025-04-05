@@ -161,18 +161,21 @@ namespace ScpmaBe.Services.Models
 
             var exitTime = DateTime.Now;
 
-            var contract = await _contractRepository
+            var contract =
+                entranceEntity.RentalType == (int)RentalType.Contract ?
+                await _contractRepository
                                     .GetAll()
+                                    .Include(x=>x.Car)
                                     .OrderByDescending(x => x.EndDate)
                                     .Where(x => x.Status.Equals((int)ContractStatus.Active) ||
                                                 x.Status.Equals((int)ContractStatus.Expired))
-                                    .FirstOrDefaultAsync(x => x.Car.LicensePlate == request.LicensePlate);
+                                    .FirstOrDefaultAsync(x => x.Car.LicensePlate == request.LicensePlate) : null;
 
             var remainingHour = 0;
 
             string calculationNotes = "";
 
-            var fee = contract != null && entranceEntity.RentalType == (int)RentalType.Contract ?
+            var fee = contract != null ?
                         CalculateContractFee(entranceEntity, contract, exitTime, out remainingHour, out calculationNotes) :
                         CalculateWalkinFee(entranceEntity, exitTime, out calculationNotes);
 
@@ -180,9 +183,9 @@ namespace ScpmaBe.Services.Models
             entranceEntity.TotalAmount = fee;
             entranceEntity.ExitTime = exitTime;
 
-            if(entranceEntity.RentalType == (int)RentalType.Contract)
+            if (entranceEntity.RentalType == (int)RentalType.Contract)
                 entranceEntity.ParkingSpace.Status = (int)ParkingSpaceStatus.Pending;
-            else 
+            else
                 entranceEntity.ParkingSpace.Status = (int)ParkingSpaceStatus.Available;
 
             await _entryExitLogRepository.Update(entranceEntity);
@@ -224,12 +227,12 @@ namespace ScpmaBe.Services.Models
 
             System.Text.StringBuilder notes = new System.Text.StringBuilder();
 
-            notes.AppendLine($"Walk-in fee calculation for license plate: {entranceEntity.LicensePlate}");
-            notes.AppendLine($"Entry time: {entranceEntity.EntryTime:yyyy-MM-dd HH:mm:ss}");
-            notes.AppendLine($"Exit time: {exitTime:yyyy-MM-dd HH:mm:ss}");
-            notes.AppendLine($"Total duration: {parkingDuration.Days} days, {parkingDuration.Hours} hours, {parkingDuration.Minutes} minutes");
-            notes.AppendLine($"Price per hour: {entranceEntity.PricePerHour:C}");
-            notes.AppendLine($"Price per day: {entranceEntity.PricePerDay:C}");
+            notes.AppendLine($"Tính phí vãng lai cho biển số xe: {entranceEntity.LicensePlate}");
+            notes.AppendLine($"Thời gian vào: {entranceEntity.EntryTime:yyyy-MM-dd HH:mm:ss}");
+            notes.AppendLine($"Thời gian ra: {exitTime:yyyy-MM-dd HH:mm:ss}");
+            notes.AppendLine($"Tổng thời gian: {parkingDuration.Days} ngày, {parkingDuration.Hours} giờ, {parkingDuration.Minutes} phút");
+            notes.AppendLine($"Giá theo giờ: {entranceEntity.PricePerHour} VNĐ");
+            notes.AppendLine($"Giá theo ngày: {entranceEntity.PricePerDay} VNĐ");
 
             // Calculate complete days
             int completeDays = (int)Math.Floor(parkingDuration.TotalDays);
@@ -242,7 +245,7 @@ namespace ScpmaBe.Services.Models
             {
                 decimal dailyFee = completeDays * entranceEntity.PricePerDay;
                 fee += dailyFee;
-                notes.AppendLine($"Days charged: {completeDays} × {entranceEntity.PricePerDay:C} = {dailyFee:C}");
+                notes.AppendLine($"Phí theo ngày: {completeDays} × {entranceEntity.PricePerDay} VNĐ = {dailyFee} VNĐ");
             }
 
             // Apply hourly rate for remaining hours
@@ -253,13 +256,13 @@ namespace ScpmaBe.Services.Models
                 if (hourlyFee > entranceEntity.PricePerDay)
                 {
                     fee += entranceEntity.PricePerDay;
-                    notes.AppendLine($"Remaining hours: {remainingHours} × {entranceEntity.PricePerHour:C} = {hourlyFee:C}");
-                    notes.AppendLine($"Hourly fee capped at daily rate: {entranceEntity.PricePerDay:C}");
+                    notes.AppendLine($"Số giờ còn lại: {remainingHours} × {entranceEntity.PricePerHour} VNĐ = {hourlyFee} VNĐ");
+                    notes.AppendLine($"Phí theo giờ được giới hạn ở mức phí theo ngày: {entranceEntity.PricePerDay} VNĐ");
                 }
                 else
                 {
                     fee += hourlyFee;
-                    notes.AppendLine($"Remaining hours: {remainingHours} × {entranceEntity.PricePerHour:C} = {hourlyFee:C}");
+                    notes.AppendLine($"Số giờ còn lại: {remainingHours} × {entranceEntity.PricePerHour} VNĐ = {hourlyFee} VNĐ");
                 }
             }
 
@@ -267,10 +270,10 @@ namespace ScpmaBe.Services.Models
             if (fee == 0 && parkingDuration.TotalMinutes > 0)
             {
                 fee = entranceEntity.PricePerHour;
-                notes.AppendLine($"Minimum charge of 1 hour applied: {entranceEntity.PricePerHour:C}");
+                notes.AppendLine($"Áp dụng mức phí tối thiểu 1 giờ: {entranceEntity.PricePerHour} VNĐ");
             }
 
-            notes.AppendLine($"Total fee: {fee:C}");
+            notes.AppendLine($"Tổng phí: {fee:C}");
             calculationNotes = notes.ToString();
             return fee;
         }
@@ -279,21 +282,21 @@ namespace ScpmaBe.Services.Models
         {
             remainingHour = 0;
             System.Text.StringBuilder notes = new System.Text.StringBuilder();
-            notes.AppendLine($"Contract fee calculation for license plate: {entranceEntity.LicensePlate}");
-            notes.AppendLine($"Contract period: {contract.StartDate:yyyy-MM-dd} to {contract.EndDate:yyyy-MM-dd}");
-            notes.AppendLine($"Entry time: {entranceEntity.EntryTime:yyyy-MM-dd HH:mm:ss}");
-            notes.AppendLine($"Exit time: {exitTime:yyyy-MM-dd HH:mm:ss}");
+            notes.AppendLine($"Tính phí hợp đồng cho biển số xe: {entranceEntity.LicensePlate}");
+            notes.AppendLine($"Thời hạn hợp đồng: {contract.StartDate:yyyy-MM-dd} đến {contract.EndDate:yyyy-MM-dd}");
+            notes.AppendLine($"Thời gian vào: {entranceEntity.EntryTime:yyyy-MM-dd HH:mm:ss}");
+            notes.AppendLine($"Thời gian ra: {exitTime:yyyy-MM-dd HH:mm:ss}");
 
             // If exit time is within contract period, no additional fee
             if (exitTime.Date <= contract.EndDate.ToDateTime(TimeOnly.MinValue))
             {
-                notes.AppendLine("Exit time is within contract period - No additional fee");
+                notes.AppendLine("Thời gian ra nằm trong thời hạn hợp đồng - Không phát sinh phí thêm");
                 calculationNotes = notes.ToString();
                 return 0;
             }
 
             // If exit time is after contract end date, calculate additional fee as walk-in
-            notes.AppendLine("Exit time is after contract end date - Additional fee calculated as walk-in");
+            notes.AppendLine("Thời gian ra vượt quá thời hạn hợp đồng - Tính phí thêm như khách vãng lai");
 
             // First, create a version of the entry log with entry time set to end of contract
             var walkInEntry = new EntryExitLog
@@ -306,14 +309,15 @@ namespace ScpmaBe.Services.Models
             };
 
             remainingHour = (int)(exitTime - contract.EndDate.ToDateTime(TimeOnly.MinValue)).TotalHours;
-            notes.AppendLine($"Hours beyond contract: {remainingHour}");
+            notes.AppendLine($"Số giờ vượt quá hợp đồng: {remainingHour}");
 
             // Calculate the walk-in fee for time beyond contract
             string walkInNotes;
             decimal fee = CalculateWalkinFee(walkInEntry, exitTime, out walkInNotes);
 
-            notes.AppendLine("Additional walk-in fee calculation:");
+            notes.AppendLine("Chi tiết tính phí thêm:");
             notes.AppendLine(walkInNotes);
+
             calculationNotes = notes.ToString();
 
             return fee;
@@ -339,6 +343,30 @@ namespace ScpmaBe.Services.Models
                                             .ToListAsync();
 
             return entranceEntities;
+        }
+
+        public async Task<bool> Pay(int id)
+        {
+            var entryExitLog = await _entryExitLogRepository.GetById(id);
+
+            if (entryExitLog == null) throw AppExceptions.NotFoundEntryExitLog();
+
+            entryExitLog.IsPaid = true;
+
+            var parkingSpace = await _parkingSpaceRepository.GetById(entryExitLog.ParkingSpaceId);
+
+            if (parkingSpace == null) throw AppExceptions.NotFoundParkingSpace();
+
+            if(entryExitLog.RentalType == (int)RentalType.Contract)
+                parkingSpace.Status = entryExitLog.TotalAmount > 0 ? 
+                                        (int)ParkingSpaceStatus.Available :
+                                        (int)ParkingSpaceStatus.Reserved;
+            else
+                parkingSpace.Status = (int)ParkingSpaceStatus.Available;
+
+            await _entryExitLogRepository.Update(entryExitLog);
+
+            return true;
         }
     }
 }

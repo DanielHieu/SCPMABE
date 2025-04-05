@@ -18,6 +18,7 @@ namespace ScpmaBe.Services.Interfaces
         Task<List<ContractResponse>> GetContractsOfCustomerAsync(int customerId);
         Task<List<ContractResponse>> SearchContractAsync(SearchContractRequest request);
 
+        Task<bool> Reject(int contractId);
         Task<bool> Approve(int contractId);
         Task<bool> Pay(int contractId);
         Task<bool> Complete(int contractId);

@@ -73,13 +73,7 @@ namespace ScpmaBe.WebApi.Controllers
 
             var contract =
                 items.Count == 0 ? null :
-                items.Select(x => new
-                {
-                    x.ContractId,
-                    x.StartDate,
-                    x.EndDate,
-                    x.Status
-                }).First();
+                items.First();
 
             return Ok(new
             {
@@ -87,6 +81,13 @@ namespace ScpmaBe.WebApi.Controllers
             });
         }
 
+        [HttpPost("{contractId}/reject")]
+        public async Task<IActionResult> Reject(int contractId)
+        {
+            var result = await _contractService.Reject(contractId);
+
+            return Ok(result);
+        }
 
         [HttpPost("{contractId}/approve")]
         public async Task<IActionResult> Approve(int contractId)

@@ -114,6 +114,7 @@ CREATE TABLE [dbo].[EntryExitLog](
 	[ExitTime] [datetime] NULL,
 	[RentalType] [int] NOT NULL,
 	[TotalAmount] [decimal](18, 2) NOT NULL,
+	IsPaid bit default(0) NOT NULL
  CONSTRAINT [PK_EntryExitLog] PRIMARY KEY CLUSTERED 
 (
 	[EntryExitLogId] ASC

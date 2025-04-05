@@ -258,3 +258,20 @@ INSERT INTO dbo.PaymentContract
 VALUES 
     (5, '2025-05-01', '2025-08-01', 320.00, N'Chuyển khoản ngân hàng', NULL, 960.00, 2, N'Đang chờ thanh toán', '2025-05-01 10:00:00', '2025-05-01 10:00:00');
 GO
+
+Update Contract
+set ParkingSpaceId = 31
+Where ContractId = 1
+GO
+UPDATE ParkingSpace
+set status = 3 
+where ParkingSpaceId = 31
+GO
+UPDATE Contract
+SET ParkingSpaceId = 32
+WHERE ContractId = 4
+GO
+UPDATE ParkingSpace
+SET [Status] = 3
+WHERE ParkingSpaceId = 32
+GO

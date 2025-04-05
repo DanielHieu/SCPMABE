@@ -27,6 +27,7 @@ public partial class EntryExitLog : IEntityBase
     public int RentalType { get; set; }
 
     public decimal TotalAmount { get; set; }
+    public bool IsPaid { get; set; }
 
     public virtual ParkingSpace ParkingSpace { get; set; }
 }

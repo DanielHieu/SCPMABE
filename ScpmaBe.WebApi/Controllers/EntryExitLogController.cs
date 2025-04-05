@@ -73,6 +73,14 @@ namespace ScpmaBe.WebApi.Controllers
 
             return Ok(result);
         }
+
+        [HttpPost("Pay/{id}")]
+        public async Task<IActionResult> Pay(int id)
+        {
+            var result = await _entryExitLogService.Pay(id);
+
+            return Ok(result);
+        }
     }
 }
 
