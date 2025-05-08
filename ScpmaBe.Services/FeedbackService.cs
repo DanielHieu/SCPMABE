@@ -212,17 +212,17 @@ namespace ScpmaBe.Services
                 return await _feedbackRepo.GetAll().CountAsync();
             }
 
-            if (status == "viewed")
+            if (status == "Viewed")
             {
                 return await _feedbackRepo.GetAll().Where(x => x.Status == (int)FeedbackStatus.Viewed).CountAsync();
             }
 
-            if (status == "new")
+            if (status == "New")
             {
                 return await _feedbackRepo.GetAll().Where(x => x.Status == (int)FeedbackStatus.New).CountAsync();
             }
 
-            if (status == "responsed")
+            if (status == "Responsed")
             {
                 return await _feedbackRepo.GetAll().Where(x => x.Status == (int)FeedbackStatus.Responsed).CountAsync();
             }

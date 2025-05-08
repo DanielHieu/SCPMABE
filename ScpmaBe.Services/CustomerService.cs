@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Text.Json;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using ScpmaBe.Repositories.Entities;
 using ScpmaBe.Repositories.Interfaces;
@@ -78,6 +79,8 @@ namespace ScpmaBe.Services
             if (string.IsNullOrEmpty(request.Username) || request.Username.Length < 4)
                 throw AppExceptions.BadRequestUsernameIsInvalid();
 
+            _logger.LogInformation("Register customer: {Customer}", JsonSerializer.Serialize(request));
+
             // Check if username already exists
             var exstingAcc = await _customerRepository.GetAll().FirstOrDefaultAsync(x => x.Username == request.Username || x.Email == request.Email);
 
@@ -110,7 +113,7 @@ namespace ScpmaBe.Services
                 var content = htmlContent.Replace("{{UserName}}", customer.Username)
                                          .Replace("{{UserEmail}}", customer.Email)
                                          .Replace("{{CreatedDate}}", DateTime.Now.ToVNTime().ToString("dd/MM/yyyy"))
-                                         .Replace("{{ActivationLink}}", $"{_appSettings.LandingPageUrl}/activate?code={activationCode}");
+                                         .Replace("{{ActivationLink}}", $"{_appSettings.LandingPageUrl}/activate/{activationCode}");
 
                 _logger.LogInformation("Sending account created email to {Email}", customer.Email);
 

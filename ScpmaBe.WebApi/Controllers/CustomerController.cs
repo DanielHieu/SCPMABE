@@ -150,10 +150,10 @@ namespace ScpmaBe.WebApi.Controllers
             return Ok(new { success = result });
         }
 
-        [HttpGet("Activate")]
-        public async Task<IActionResult> Activate(string code)
+        [HttpPost("Activate")]
+        public async Task<IActionResult> Activate(ActivateRequest request)
         {
-            var result = await _customerService.ActivateAccountAsync(code);
+            var result = await _customerService.ActivateAccountAsync(request.Code);
             return Ok(new { success = result });
         }
     }

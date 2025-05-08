@@ -183,6 +183,7 @@ namespace ScpmaBe.Services
         public async Task<Contract> AddContractAsync(AddContractRequest request)
         {
             var existCar = await _carRepository.CarIdExsistAsync(request.CarId);
+
             if (!existCar) throw AppExceptions.NotFoundId();
 
             var parkingLot = await _parkingLotRepository.GetById(request.ParkingLotId);

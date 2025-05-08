@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ScpmaBe.Services.Enum;
 using ScpmaBe.Services.Interfaces;
 using ScpmaBe.Services.Models;
 
@@ -90,6 +91,22 @@ namespace ScpmaBe.WebApi.Controllers
             var result = await _feedbackService.CountFeedbacksAsync(status);
             
             return Ok(result);
+        }
+
+        [HttpGet("CountStats")]
+        public async Task<IActionResult> CountStats()
+        {
+            var status1 =  await _feedbackService.CountFeedbacksAsync(FeedbackStatus.New.ToString());
+            var status2 = await _feedbackService.CountFeedbacksAsync(FeedbackStatus.Viewed.ToString());
+            var status3 = await _feedbackService.CountFeedbacksAsync(FeedbackStatus.Responsed.ToString());
+
+            return Ok(new
+            {
+                All = status1 + status2 + status3,
+                New = status1,
+                Viewed = status2,
+                Responsed = status3
+            });
         }
     }
 }
