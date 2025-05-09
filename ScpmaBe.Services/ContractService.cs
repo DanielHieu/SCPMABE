@@ -765,7 +765,7 @@ namespace ScpmaBe.Services
 
             contracts.ForEach(x => x.RemainingDays = (x.ExpiredDate.ToDateTime(TimeOnly.MinValue) - DateTime.Now.ToVNTime()).Days);
             
-            return contracts;
+            return contracts.Where(x=>x.RemainingDays <= 10).OrderBy(x=>x.RemainingDays).ToList();
         }
 
         public async Task<List<PaymentContractResponse>> GetPaymentHistories(int customerId)
