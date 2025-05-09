@@ -343,6 +343,11 @@ namespace ScpmaBe.Services
                 paymentContract.Status = (int)PaymentContractStatus.Rejected;
                 paymentContract.UpdatedDate = DateTime.Now.ToVNTime();
 
+                var contract = await _contractRepository.GetById(paymentContract.ContractId);
+                if (contract.Status == (int)ContractStatus.Inactive) {
+                    contract.Status = (int)ContractStatus.Canceled;
+                }
+
                 await _paymentContractRepository.Update(paymentContract);
             }
 

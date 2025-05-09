@@ -241,5 +241,26 @@ namespace ScpmaBe.Services
 
             return true;
         }
+
+        public async Task<List<TaskEachResponse>> GetScheduleAsync(ScheduleRquest request)
+        {
+            var tasks = await _taskEachRepository.GetAll()
+                .Where(x => x.AssignedToId == request.StaffId
+                    && x.StartDate.Date >= request.StartDate.Date
+                    && x.EndDate.Date <= request.EndDate.Date)
+                .Select(x => new TaskEachResponse
+                {
+                    TaskEachId = x.TaskEachId,
+                    Title = x.Title,
+                    Description = x.Description,
+                    StartDate = x.StartDate.ToString("yyyy-MM-dd"),
+                    EndDate = x.EndDate.ToString("yyyy-MM-dd"),
+                    Priority = ((TaskEachPriority)x.Priority).ToString(),
+                    Status = ((TaskEachStatus)x.Status).ToString(),
+                })
+                .ToListAsync();
+
+            return tasks;
+        }
     }
 }

@@ -56,7 +56,7 @@ namespace ScpmaBe.WebApi.Controllers
             return Ok(new { sucess = result });
         }
 
-        [HttpPost("Complete")]
+        [HttpPost("{id}/Complete")]
         public async Task<IActionResult> Complete(int id)
         {
             var result = await _taskEachService.CompleteAsync(id);

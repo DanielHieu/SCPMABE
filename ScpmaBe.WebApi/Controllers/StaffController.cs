@@ -159,5 +159,14 @@ namespace ScpmaBe.WebApi.Controllers
 
             return Ok(new { success = result });
         }
+
+        [HttpPost("Schedule")]
+        public async Task<IActionResult> GetSchedule([FromBody]ScheduleRquest request)
+        {
+
+            var result = await _staffService.GetScheduleAsync(request);
+
+            return Ok(result);
+        }
     }
 }

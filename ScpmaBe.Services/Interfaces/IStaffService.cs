@@ -23,6 +23,7 @@ namespace ScpmaBe.Services.Interfaces
         Task<List<TaskEachResponse>> GetTasks(int id);
 
         Task<bool> ChangePasswordAsync(StaffChangePasswordRequest request);
+        Task<List<TaskEachResponse>> GetScheduleAsync(ScheduleRquest request);
     }
 }
                     
