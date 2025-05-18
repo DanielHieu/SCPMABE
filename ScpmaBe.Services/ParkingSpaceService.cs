@@ -144,11 +144,13 @@ namespace ScpmaBe.Services
 
             try
             {
+                // Lấy ParkingSpaceId từ ParkingStatusSensor
                 var parkingSpace = await _parkingSpaceRepository.GetById(parkingStatusSensor.ParkingSpaceId);
 
                 if (parkingSpace == null) return false;
 
-                if(parkingSpace.Status == (int)ParkingSpaceStatus.Occupied)
+                // Cập nhật trạng thái của ParkingSpace
+                if (parkingSpace.Status == (int)ParkingSpaceStatus.Occupied)
                 {
                     parkingSpace.Status = (int)ParkingSpaceStatus.Pending;
                 }
@@ -156,6 +158,9 @@ namespace ScpmaBe.Services
                 {
                     parkingSpace.Status = (int)ParkingSpaceStatus.Occupied;
                 }
+
+                // Cập nhật ParkingStatusSensor - State
+                parkingStatusSensor.IsActive = parkingSpace.Status == (int)ParkingSpaceStatus.Occupied;
 
                 await _parkingSpaceRepository.Update(parkingSpace);
             }
