@@ -232,6 +232,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[ParkingStatusSensor](
 	[ParkingStatusSensorId] [int] IDENTITY(1,1) NOT NULL,
+	[Name] nvarchar(64),
 	[ParkingSpaceId] [int] NOT NULL,
 	[ApiKey] [nvarchar](128) NOT NULL,
 	[IsActive] [bit] NOT NULL,

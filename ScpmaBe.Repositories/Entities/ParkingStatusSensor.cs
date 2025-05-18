@@ -9,6 +9,7 @@ namespace ScpmaBe.Repositories.Entities;
 public partial class ParkingStatusSensor : IEntityBase
 {
     public int ParkingStatusSensorId { get; set; }
+    public string Name { get; set; }
 
     public int ParkingSpaceId { get; set; }
 

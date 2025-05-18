@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Azure.Core;
+using Microsoft.EntityFrameworkCore;
 using ScpmaBe.Repositories.Entities;
 using ScpmaBe.Repositories.Interfaces;
 using ScpmaBe.Services.Interfaces;
@@ -21,8 +22,8 @@ namespace ScpmaBe.Services
                             .Include(x => x.ParkingSpace)
                             .Select(x => new ParkingStatusSensorResponse
                             {
+                                Name = x.Name,
                                 ParkingStatusSensorId = x.ParkingStatusSensorId,
-                                Name = $"IR{x.ParkingStatusSensorId:00#}",
                                 ApiKey = x.ApiKey,
                                 ParkingSpaceId = x.ParkingSpaceId,
                                 ParkingSpaceName = x.ParkingSpace.ParkingSpaceName,
@@ -34,9 +35,10 @@ namespace ScpmaBe.Services
         {
             var sensor = new ParkingStatusSensor
             {
+                Name = request.Name,
                 ApiKey = request.ApiKey,
                 ParkingSpaceId = request.ParkingSpaceId,
-                IsActive = request.Status == "Active"
+                IsActive = false
             };
 
             await _repository.Insert(sensor);
@@ -53,8 +55,8 @@ namespace ScpmaBe.Services
                 return false;
             }
 
+            sensor.Name = request.Name;
             sensor.ApiKey = request.ApiKey;
-            sensor.IsActive = request.Status == "Active";
 
             await _repository.Update(sensor);
 
@@ -72,6 +74,22 @@ namespace ScpmaBe.Services
 
             await _repository.Delete(id);
             
+            return true;
+        }
+
+        public async Task<bool> ChangeState(int id, bool isActive)
+        {
+            var sensor = await _repository.GetById(id);
+
+            if (sensor == null)
+            {
+                return false;
+            }
+
+            sensor.IsActive = isActive;
+
+            await _repository.Update(sensor);
+
             return true;
         }
     }

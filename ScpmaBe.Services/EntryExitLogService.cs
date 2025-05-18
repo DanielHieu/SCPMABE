@@ -279,8 +279,8 @@ namespace ScpmaBe.Services.Models
             notes.AppendLine($"Thời gian vào: {entranceEntity.EntryTime:yyyy-MM-dd HH:mm:ss}");
             notes.AppendLine($"Thời gian ra: {exitTime:yyyy-MM-dd HH:mm:ss}");
             notes.AppendLine($"Tổng thời gian: {parkingDuration.Days} ngày, {parkingDuration.Hours} giờ, {parkingDuration.Minutes} phút");
-            notes.AppendLine($"Giá theo giờ: {entranceEntity.PricePerHour} VNĐ");
-            notes.AppendLine($"Giá theo ngày: {entranceEntity.PricePerDay} VNĐ");
+            notes.AppendLine($"Giá theo giờ: {NumberHelper.FormatNumberWithVietnameseFormat(entranceEntity.PricePerHour)} VNĐ");
+            notes.AppendLine($"Giá theo ngày: {NumberHelper.FormatNumberWithVietnameseFormat(entranceEntity.PricePerDay)} VNĐ");
 
             // Calculate complete days
             int completeDays = (int)Math.Floor(parkingDuration.TotalDays);
@@ -293,7 +293,7 @@ namespace ScpmaBe.Services.Models
             {
                 decimal dailyFee = completeDays * entranceEntity.PricePerDay;
                 fee += dailyFee;
-                notes.AppendLine($"Phí theo ngày: {completeDays} × {entranceEntity.PricePerDay} VNĐ = {dailyFee} VNĐ");
+                notes.AppendLine($"Phí theo ngày: {completeDays} × {NumberHelper.FormatNumberWithVietnameseFormat(entranceEntity.PricePerDay)} VNĐ = {NumberHelper.FormatNumberWithVietnameseFormat(dailyFee)} VNĐ");
             }
 
             // Apply hourly rate for remaining hours
@@ -304,13 +304,13 @@ namespace ScpmaBe.Services.Models
                 if (hourlyFee > entranceEntity.PricePerDay)
                 {
                     fee += entranceEntity.PricePerDay;
-                    notes.AppendLine($"Số giờ còn lại: {remainingHours} × {entranceEntity.PricePerHour} VNĐ = {hourlyFee} VNĐ");
-                    notes.AppendLine($"Phí theo giờ được giới hạn ở mức phí theo ngày: {entranceEntity.PricePerDay} VNĐ");
+                    notes.AppendLine($"Số giờ còn lại: {remainingHours} × {NumberHelper.FormatNumberWithVietnameseFormat(entranceEntity.PricePerHour)} VNĐ = {NumberHelper.FormatNumberWithVietnameseFormat(hourlyFee)} VNĐ");
+                    notes.AppendLine($"Phí theo giờ được giới hạn ở mức phí theo ngày: {NumberHelper.FormatNumberWithVietnameseFormat(entranceEntity.PricePerDay)} VNĐ");
                 }
                 else
                 {
                     fee += hourlyFee;
-                    notes.AppendLine($"Số giờ còn lại: {remainingHours} × {entranceEntity.PricePerHour} VNĐ = {hourlyFee} VNĐ");
+                    notes.AppendLine($"Số giờ còn lại: {remainingHours} × {NumberHelper.FormatNumberWithVietnameseFormat(entranceEntity.PricePerHour)} VNĐ = {NumberHelper.FormatNumberWithVietnameseFormat(hourlyFee)} VNĐ");
                 }
             }
 
@@ -318,10 +318,10 @@ namespace ScpmaBe.Services.Models
             if (fee == 0 && parkingDuration.TotalMinutes > 0)
             {
                 fee = entranceEntity.PricePerHour;
-                notes.AppendLine($"Áp dụng mức phí tối thiểu 1 giờ: {entranceEntity.PricePerHour} VNĐ");
+                notes.AppendLine($"Áp dụng mức phí tối thiểu 1 giờ: {NumberHelper.FormatNumberWithVietnameseFormat(entranceEntity.PricePerHour)} VNĐ");
             }
 
-            notes.AppendLine($"Tổng phí: {fee:C}");
+            notes.AppendLine($"Tổng phí: {NumberHelper.FormatNumberWithVietnameseFormat(fee)} VNĐ");
             calculationNotes = notes.ToString();
             return fee;
         }

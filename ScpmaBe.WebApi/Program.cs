@@ -59,6 +59,7 @@ var appSettings = new AppSettings
 
 builder.Services.AddSingleton(appSettings);
 builder.Services.AddSingleton<IEmailHelper>(new EmailHelper(appSettings));
+builder.Services.AddSingleton<IFcmSender, FcmSender>();
 
 var cnnString = builder.Configuration.GetConnectionString("DefaultConnection");
 
@@ -97,7 +98,6 @@ builder.Services.AddScoped<IParkingStatusSensorService, ParkingStatusSensorServi
 
 builder.Services.AddScoped<IReportService, ReportService>();
 builder.Services.AddScoped<IImageService, ImageService>();
-
 
 var app = builder.Build();
 

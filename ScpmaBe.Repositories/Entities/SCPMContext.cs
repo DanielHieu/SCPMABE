@@ -267,6 +267,8 @@ public partial class SCPMContext : DbContext
 
             entity.HasIndex(e => e.ParkingStatusSensorId, "IX_ParkingStatusSensor").IsUnique();
 
+            entity.Property(e => e.Name).HasMaxLength(64);
+
             entity.Property(e => e.ApiKey)
                 .IsRequired()
                 .HasMaxLength(128);
