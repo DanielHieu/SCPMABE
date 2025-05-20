@@ -8,24 +8,27 @@ namespace ScpmaBe.WebApi.Controllers
     [ApiController]
     public class SensorController : ControllerBase
     {
+        private readonly ILogger _logger;
         private readonly IParkingSpaceService _parkingSpaceService;
         private readonly IParkingStatusSensorService _parkingStatusSensorService;
 
-        public SensorController(IParkingSpaceService parkingSpaceService, IParkingStatusSensorService parkingStatusSensorService)
+        public SensorController(
+            ILogger<SensorController> logger,
+            IParkingSpaceService parkingSpaceService, 
+            IParkingStatusSensorService parkingStatusSensorService)
         {
+            _logger = logger;
+
             _parkingSpaceService = parkingSpaceService;
             _parkingStatusSensorService = parkingStatusSensorService;
         }
 
-        [HttpGet("ChangeStatus")]
-        public async Task<bool> ChangeStatus()
+        [HttpPost("ChangeStatus")]
+        public async Task<bool> ChangeStatus([FromBody] SensorChangeStatusRequest request)
         {
-            if(Request.Headers.TryGetValue("ApiKey",out var value))
-            {
-                return await _parkingSpaceService.ChangeStatus(value.ToString());
-            }
+            _logger.LogInformation("ChangeStatus called with ApiKey: {ApiKey} and Value: {Value}", request.ApiKey, request.Value);
 
-            return false;
+            return await _parkingSpaceService.ChangeStatus(request.ApiKey, request.Value);
         }
 
         [HttpGet("GetAll")]

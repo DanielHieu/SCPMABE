@@ -136,7 +136,7 @@ namespace ScpmaBe.Services
                             }).ToListAsync();
         }
 
-        public async Task<bool> ChangeStatus(string apiKey)
+        public async Task<bool> ChangeStatus(string apiKey, int value)
         {
             var parkingStatusSensor = await _parkingStatusSensorRepository.GetAll().FirstOrDefaultAsync(x => x.ApiKey == apiKey);
 
@@ -149,19 +149,29 @@ namespace ScpmaBe.Services
 
                 if (parkingSpace == null) return false;
 
-                // Cập nhật trạng thái của ParkingSpace
-                if (parkingSpace.Status == (int)ParkingSpaceStatus.Occupied)
+                // Cập nhật trạng thái của ParkingSpace khi sensor ON
+                if(value == 0)
                 {
-                    parkingSpace.Status = (int)ParkingSpaceStatus.Pending;
+                    if (parkingSpace.Status == (int)ParkingSpaceStatus.Pending)
+                    {
+                        parkingSpace.Status = (int)ParkingSpaceStatus.Occupied;
+                    }
+
+                    parkingStatusSensor.IsActive = true;
                 }
-                else if(parkingSpace.Status == (int)ParkingSpaceStatus.Pending)
+                // Cập nhật trạng thái của ParkingSpace khi sensor OFF
+                else
                 {
-                    parkingSpace.Status = (int)ParkingSpaceStatus.Occupied;
+
+                    if (parkingSpace.Status == (int)ParkingSpaceStatus.Occupied)
+                    {
+                        parkingSpace.Status = (int)ParkingSpaceStatus.Pending;
+                    }
+
+                    parkingStatusSensor.IsActive = false;
                 }
 
                 // Cập nhật ParkingStatusSensor - State
-                parkingStatusSensor.IsActive = parkingSpace.Status == (int)ParkingSpaceStatus.Occupied;
-
                 await _parkingSpaceRepository.Update(parkingSpace);
             }
             catch

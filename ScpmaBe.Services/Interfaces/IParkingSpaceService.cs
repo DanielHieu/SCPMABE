@@ -11,7 +11,7 @@ namespace ScpmaBe.Services.Interfaces
 
         Task<List<ParkingSpaceResponse>> GetParkingSpacesByFloor(int floorId);
 
-        Task<bool> ChangeStatus(string apiKey);
+        Task<bool> ChangeStatus(string apiKey, int value);
 
     }
 }
