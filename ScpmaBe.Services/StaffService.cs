@@ -120,7 +120,8 @@ namespace ScpmaBe.Services
         {
             var updateAcc = await _staffRepository.GetById(request.StaffId);
 
-            if (updateAcc == null) throw AppExceptions.NotFoundAccount();
+            if (updateAcc == null) 
+                throw AppExceptions.NotFoundAccount();
 
             updateAcc.Email = request.Email;
             updateAcc.FirstName = request.FirstName;
@@ -138,9 +139,12 @@ namespace ScpmaBe.Services
             try
             {
                 var acc = await _staffRepository.GetById(id);
-                if (acc == null) throw AppExceptions.NotFoundAccount();
+
+                if (acc == null) 
+                    throw AppExceptions.NotFoundAccount();
 
                 await _staffRepository.Delete(id);
+
                 return true;
             }
             catch (Exception ex)

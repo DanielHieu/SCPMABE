@@ -14,5 +14,6 @@ namespace ScpmaBe.Services.Interfaces
 
         Task<bool> DeleteTaskEachAsync(int id);
         Task<bool> CompleteAsync(int id);
+        Task<bool> ChangeInProgressAsync(int id);
     }
 }

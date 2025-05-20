@@ -171,5 +171,25 @@ namespace ScpmaBe.Services
                 throw new Exception(ex.Message);
             }
         }
+
+        public async Task<bool> ChangeInProgressAsync(int id)
+        {
+            try
+            {
+                var task = await _taskEachRepository.GetById(id);
+
+                if (task == null) throw AppExceptions.NotFoundId();
+
+                task.Status = (int)TaskEachStatus.InProgress;
+
+                await _taskEachRepository.Update(task);
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
     }
 }

@@ -37,7 +37,8 @@ namespace ScpmaBe.WebApi.Controllers
                     acc.FirstName,
                     acc.LastName,
                     acc.Phone,
-                    acc.Username
+                    acc.Username,
+                    Name = $"{acc.FirstName} {acc.LastName}"
                 }
             });
         }

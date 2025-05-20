@@ -63,5 +63,13 @@ namespace ScpmaBe.WebApi.Controllers
 
             return Ok(new { sucess = result });
         }
+
+        [HttpPost("{id}/InProgress")]
+        public async Task<IActionResult> ChangeInProgress(int id)
+        {
+            var result = await _taskEachService.ChangeInProgressAsync(id);
+
+            return Ok(new { sucess = result });
+        }
     }
 }
